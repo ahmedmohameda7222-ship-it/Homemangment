@@ -23,7 +23,7 @@
   --color-amber-light: var(--profile-soft-2, #D8BC9A);
   --color-warm-gray: var(--border-soft, #E8E2D8);
   --color-warm-gray-light: var(--surface-soft, #F0EBE2);
-  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Inter", "Segoe UI", "Tahoma", "Arial", system-ui, sans-serif;
 }
 
 :root {
@@ -38,9 +38,7 @@
   --danger: #B35C4B;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   background-color: var(--app-background);
@@ -50,63 +48,36 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--app-background);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--profile-secondary, #D8B86F);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--profile-primary, #B89A50);
+body.lang-ar {
+  font-family: "Tahoma", "Arial", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: 0;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+body.lang-ar .tracking-wider,
+body.lang-ar .tracking-wide,
+body.lang-ar .tracking-\[0\.18em\],
+body.lang-ar .tracking-\[0\.22em\],
+body.lang-ar .tracking-\[0\.24em\] {
+  letter-spacing: 0.02em;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+body.lang-ar .text-left { text-align: right; }
+body.lang-ar .text-right { text-align: left; }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--app-background); }
+::-webkit-scrollbar-thumb { background: var(--profile-secondary, #D8B86F); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--profile-primary, #B89A50); }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.4s ease-out forwards;
-}
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
+.animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+.animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+.animate-scale-in { animation: scaleIn 0.3s ease-out forwards; }
 
-.animate-scale-in {
-  animation: scaleIn 0.3s ease-out forwards;
-}
-
-.stagger-children > * {
-  opacity: 0;
-  animation: fadeInUp 0.4s ease-out forwards;
-}
+.stagger-children > * { opacity: 0; animation: fadeInUp 0.4s ease-out forwards; }
 .stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
 .stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
 .stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
@@ -114,26 +85,11 @@ body {
 .stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
 .stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
 
-.profile-bg {
-  background-color: var(--profile-primary, #465431);
-}
-.profile-bg-hover:hover {
-  background-color: var(--profile-primary-hover, #354025);
-}
-.profile-text {
-  color: var(--profile-text-accent, #1A1A2E);
-}
+.profile-bg { background-color: var(--profile-primary, #465431); }
+.profile-bg-hover:hover { background-color: var(--profile-primary-hover, #354025); }
+.profile-text { color: var(--profile-text-accent, #1A1A2E); }
 .profile-soft-bg,
-.profile-bg-soft {
-  background-color: var(--profile-soft, #F7F3EA);
-}
-.profile-border {
-  border-color: var(--profile-primary, #465431);
-}
-.profile-focus:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--surface, #FFFFFF), 0 0 0 5px var(--profile-soft-2, #E8E2D8);
-}
-.profile-ring {
-  box-shadow: 0 0 0 3px var(--profile-soft-2, #E8E2D8);
-}
+.profile-bg-soft { background-color: var(--profile-soft, #F7F3EA); }
+.profile-border { border-color: var(--profile-primary, #465431); }
+.profile-focus:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--surface, #FFFFFF), 0 0 0 5px var(--profile-soft-2, #E8E2D8); }
+.profile-ring { box-shadow: 0 0 0 3px var(--profile-soft-2, #E8E2D8); }
