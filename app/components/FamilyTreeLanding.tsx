@@ -17,6 +17,86 @@ interface FamilyTreeLandingProps {
   onSkip: () => void;
 }
 
+type PhotoFrameSpec = {
+  /** CSS aspect-ratio. Matched to the real source photo shape. */
+  aspectRatio: string;
+  /** Desktop frame width in px. Height is derived from aspectRatio. */
+  desktopWidth: number;
+  /** Mobile frame width in px. Height is derived from aspectRatio. */
+  mobileWidth: number;
+  /** Per-photo crop anchor. Keeps important faces visible. */
+  objectPosition: string;
+  /** Cover removes the empty side bands caused by object-contain. */
+  objectFit: "cover";
+};
+
+const PHOTO_FRAME_SPECS: Record<FamilyTreeNode["id"], PhotoFrameSpec> = {
+  baba: {
+    // Source: 700×2048. Very tall portrait; crop from the top so Baba's face stays visible.
+    aspectRatio: "3 / 4",
+    desktopWidth: 260,
+    mobileWidth: 238,
+    objectPosition: "50% 9%",
+    objectFit: "cover",
+  },
+  mama: {
+    // Source: 1086×1449. Natural 3:4 portrait.
+    aspectRatio: "3 / 4",
+    desktopWidth: 260,
+    mobileWidth: 238,
+    objectPosition: "50% 42%",
+    objectFit: "cover",
+  },
+  wedding: {
+    // Source: 1448×1086. Natural 4:3 landscape.
+    aspectRatio: "4 / 3",
+    desktopWidth: 360,
+    mobileWidth: 310,
+    objectPosition: "50% 50%",
+    objectFit: "cover",
+  },
+  "sherien-1994": {
+    // Source: 983×1600. Natural 3:5 portrait.
+    aspectRatio: "3 / 5",
+    desktopWidth: 226,
+    mobileWidth: 216,
+    objectPosition: "50% 38%",
+    objectFit: "cover",
+  },
+  "sherien-with-parents": {
+    // Source: 1316×1195. Almost square family memory.
+    aspectRatio: "1 / 1",
+    desktopWidth: 300,
+    mobileWidth: 282,
+    objectPosition: "50% 50%",
+    objectFit: "cover",
+  },
+  "ahmed-2002": {
+    // Source: 1122×1402. Natural 4:5 portrait.
+    aspectRatio: "4 / 5",
+    desktopWidth: 270,
+    mobileWidth: 244,
+    objectPosition: "50% 40%",
+    objectFit: "cover",
+  },
+  "ahmed-with-parents": {
+    // Source: 768×1024. Natural 3:4 portrait.
+    aspectRatio: "3 / 4",
+    desktopWidth: 260,
+    mobileWidth: 238,
+    objectPosition: "50% 43%",
+    objectFit: "cover",
+  },
+  "family-four": {
+    // Source: 1448×1086. Natural 4:3 landscape.
+    aspectRatio: "4 / 3",
+    desktopWidth: 420,
+    mobileWidth: 340,
+    objectPosition: "50% 50%",
+    objectFit: "cover",
+  },
+};
+
 export default function FamilyTreeLanding({ onEnter, onSkip }: FamilyTreeLandingProps) {
   const [step, setStep] = useState<AnimationStep>(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -231,7 +311,7 @@ function DesktopFamilyTree({
   const visible = (s: AnimationStep) => reducedMotion || step >= s;
   const line = (s: AnimationStep) => (reducedMotion || step >= s ? "animate" : "");
 
-  const cardW = 400; // px — wide photo frames
+  const cardW = 400; // px — fixed layout slot; photo frames inside each slot are image-specific
   const gap = 280;   // px — generous gap between cards
   const svgW = cardW * 2 + gap; // 1080
   const svgH = 180;  // taller connectors
@@ -390,25 +470,19 @@ function FamilyNodeCard({
     return <div className={mobile ? "h-[420px]" : "h-[520px]"} aria-hidden="true" />;
   }
 
-  const widthClass = mobile
+  const frame = PHOTO_FRAME_SPECS[node.id];
+  const frameWidth = mobile ? frame.mobileWidth : frame.desktopWidth;
+  const slotClass = mobile
     ? isFinal
-      ? "w-[22rem]"
-      : "w-80"
+      ? "w-full max-w-[22rem]"
+      : "w-full max-w-80"
     : isFinal
       ? "w-[28rem]"
       : "w-[25rem]";
 
-  const photoHeight = mobile
-    ? isFinal
-      ? "h-80"
-      : "h-72"
-    : isFinal
-      ? "h-96"
-      : "h-80";
-
   return (
     <div
-      className={`relative ${widthClass} flex flex-col items-center card-appear`}
+      className={`relative ${slotClass} flex flex-col items-center card-appear`}
       style={{ animationDelay: "0ms" }}
     >
       {/* Halo behind photo */}
@@ -428,7 +502,11 @@ function FamilyNodeCard({
 
       {/* Photo frame */}
       <div
-        className={`relative w-full ${photoHeight} rounded-2xl overflow-hidden border border-champagne/30 shadow-[0_8px_30px_rgba(0,0,0,0.4)] bg-[#2a2018]`}
+        className="relative rounded-2xl overflow-hidden border border-champagne/30 shadow-[0_8px_30px_rgba(0,0,0,0.4)] bg-[#2a2018]"
+        style={{
+          width: `min(100%, ${frameWidth}px)`,
+          aspectRatio: frame.aspectRatio,
+        }}
       >
         {errored ? (
           <div className="w-full h-full flex flex-col items-center justify-center text-cream/40 gap-2">
@@ -445,7 +523,11 @@ function FamilyNodeCard({
           <img
             src={node.src}
             alt={node.alt}
-            className="w-full h-full object-contain"
+            className="w-full h-full"
+            style={{
+              objectFit: frame.objectFit,
+              objectPosition: frame.objectPosition,
+            }}
             loading="lazy"
             onError={onError}
           />
