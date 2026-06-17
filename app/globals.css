@@ -39,28 +39,8 @@
 }
 
 html { scroll-behavior: smooth; }
-
-body {
-  background-color: var(--app-background);
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body.lang-ar {
-  font-family: "Tahoma", "Arial", "Segoe UI", system-ui, sans-serif;
-  letter-spacing: 0;
-}
-
-body.lang-ar .tracking-wider,
-body.lang-ar .tracking-wide,
-body.lang-ar .tracking-\[0\.18em\],
-body.lang-ar .tracking-\[0\.22em\],
-body.lang-ar .tracking-\[0\.24em\] {
-  letter-spacing: 0.02em;
-}
-
+body { background-color: var(--app-background); color: var(--text-primary); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body.lang-ar { font-family: "Tahoma", "Arial", "Segoe UI", system-ui, sans-serif; letter-spacing: 0; }
 body.lang-ar .text-left { text-align: right; }
 body.lang-ar .text-right { text-align: left; }
 
@@ -88,8 +68,7 @@ body.lang-ar .text-right { text-align: left; }
 .profile-bg { background-color: var(--profile-primary, #465431); }
 .profile-bg-hover:hover { background-color: var(--profile-primary-hover, #354025); }
 .profile-text { color: var(--profile-text-accent, #1A1A2E); }
-.profile-soft-bg,
-.profile-bg-soft { background-color: var(--profile-soft, #F7F3EA); }
+.profile-soft-bg, .profile-bg-soft { background-color: var(--profile-soft, #F7F3EA); }
 .profile-border { border-color: var(--profile-primary, #465431); }
 .profile-focus:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--surface, #FFFFFF), 0 0 0 5px var(--profile-soft-2, #E8E2D8); }
 .profile-ring { box-shadow: 0 0 0 3px var(--profile-soft-2, #E8E2D8); }
