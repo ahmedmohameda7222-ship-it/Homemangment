@@ -11,10 +11,12 @@ import {
   Plus,
   Calendar,
   ArrowRight,
+  Wallet,
 } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
 import { useDataStore } from "../hooks/useDataStore";
 import { getProfileTheme } from "../lib/profile-themes";
+import { getHomeBudgetTotals } from "../lib/home-budget";
 import {
   formatCurrency,
   getDaysUntil,
@@ -63,6 +65,7 @@ export default function DashboardPage() {
 
   const monthlyExpenses = data.expenses.filter((e) => e.date.startsWith(month));
   const totalSpending = monthlyExpenses.reduce((s, e) => s + e.amount, 0);
+  const budgetTotals = getHomeBudgetTotals(data.homeBudgetTransactions, data.expenses);
 
   const upcomingBills = data.bills.filter(
     (b) => !b.paid && getDaysUntil(b.dueDate) >= 0 && getDaysUntil(b.dueDate) <= 7
@@ -115,6 +118,14 @@ export default function DashboardPage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-5 space-y-7">
+        <HomeBudgetCircle
+          balance={budgetTotals.balance}
+          totalAdded={budgetTotals.totalAdded}
+          totalUsed={budgetTotals.totalUsed}
+          color={primaryColor}
+          onClick={() => router.push("/home-budget")}
+        />
+
         <section>
           <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: textAccent }}>
             Today&apos;s Home Summary
@@ -198,9 +209,9 @@ export default function DashboardPage() {
           </h2>
           <div className="grid grid-cols-4 gap-2 sm:gap-4">
             <QuickActionButton label="Add Expense" icon={<Plus size={21} />} href="/money" color={primaryColor} />
+            <QuickActionButton label="Home Budget" icon={<Wallet size={21} />} href="/home-budget" color={primaryColor} />
             <QuickActionButton label="Add Task" icon={<Plus size={21} />} href="/tasks" color={primaryColor} />
             <QuickActionButton label="Report Problem" icon={<Plus size={21} />} href="/repairs" color={primaryColor} />
-            <QuickActionButton label="Add Shopping" icon={<Plus size={21} />} href="/shopping" color={primaryColor} />
           </div>
         </section>
 
@@ -232,6 +243,42 @@ export default function DashboardPage() {
 
       <BottomNav />
     </div>
+  );
+}
+
+function HomeBudgetCircle({
+  balance,
+  totalAdded,
+  totalUsed,
+  color,
+  onClick,
+}: {
+  balance: number;
+  totalAdded: number;
+  totalUsed: number;
+  color: string;
+  onClick: () => void;
+}) {
+  return (
+    <section className="flex justify-center pt-1">
+      <button
+        onClick={onClick}
+        className="group relative flex h-48 w-48 flex-col items-center justify-center rounded-full bg-cream border border-white shadow-[0_22px_50px_rgba(26,26,46,0.10)] transition-transform active:scale-[0.98] profile-focus"
+      >
+        <div className="absolute inset-3 rounded-full border border-warm-gray/70" />
+        <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl" style={{ backgroundColor: color + "18", color }}>
+          <Wallet size={22} />
+        </div>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-navy-muted">Home Budget</p>
+        <p className="mt-1 text-2xl font-bold text-navy">{formatCurrency(balance)}</p>
+        <p className="mt-1 text-[11px] text-navy-muted">Tap to manage</p>
+        <div className="mt-3 flex gap-2 text-[10px] text-navy-muted">
+          <span>In {formatCurrency(totalAdded)}</span>
+          <span>•</span>
+          <span>Used {formatCurrency(totalUsed)}</span>
+        </div>
+      </button>
+    </section>
   );
 }
 
