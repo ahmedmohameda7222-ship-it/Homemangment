@@ -12,11 +12,11 @@ import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 
 const MORE_LINKS = [
-  { label: "Bills", href: "/bills", icon: Receipt, color: "#7BA4C4" },
-  { label: "Shopping", href: "/shopping", icon: ShoppingCart, color: "#D8B86F" },
-  { label: "Home Items", href: "/items", icon: Tv, color: "#465431" },
-  { label: "Reports", href: "/reports", icon: BarChart3, color: "#8A9A6B" },
-  { label: "Settings", href: "/settings", icon: Settings, color: "#6B6B80" },
+  { label: "Bills", href: "/bills", icon: Receipt },
+  { label: "Shopping", href: "/shopping", icon: ShoppingCart },
+  { label: "Home Items", href: "/items", icon: Tv },
+  { label: "Reports", href: "/reports", icon: BarChart3 },
+  { label: "Settings", href: "/settings", icon: Settings },
 ];
 
 export default function FamilyPage() {
@@ -24,6 +24,7 @@ export default function FamilyPage() {
   const router = useRouter();
   const { data } = useDataStore();
   const month = getCurrentMonth();
+  const activeTheme = getProfileTheme(selectedProfile);
 
   if (!selectedProfile) {
     router.push("/");
@@ -35,9 +36,8 @@ export default function FamilyPage() {
       <Header title="Family" subtitle="Manage your home together" showBack={false} />
 
       <div className="max-w-md mx-auto px-5 space-y-6 pt-4">
-        {/* Family Members */}
         <section>
-          <h2 className="text-sm font-semibold text-navy uppercase tracking-wider mb-3">Family Members</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: activeTheme.textAccent }}>Family Members</h2>
           <div className="space-y-2 stagger-children">
             {PROFILES.map((profile) => {
               const tasks = data.tasks.filter((t) => t.assignedTo === profile.id && t.status !== "done").length;
@@ -51,14 +51,12 @@ export default function FamilyPage() {
                 <button
                   key={profile.id}
                   onClick={() => router.push(`/family/${profile.id}`)}
-                  className={`w-full flex items-center gap-3 p-4 bg-cream rounded-2xl border text-left transition-all hover:bg-cream-dark ${
-                    isActive ? "shadow-sm" : "border-warm-gray/60"
-                  }`}
-                  style={isActive ? { borderColor: theme?.primary ? theme.primary + "40" : undefined } : undefined}
+                  className="w-full flex items-center gap-3 p-4 bg-cream rounded-2xl border text-left transition-all hover:bg-cream-dark profile-focus"
+                  style={{ borderColor: isActive ? activeTheme.primary + "45" : activeTheme.primary + "18" }}
                 >
                   <div
                     className="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold text-cream shrink-0"
-                    style={{ backgroundColor: theme?.primary ?? profile.color }}
+                    style={{ backgroundColor: theme.primary }}
                   >
                     {profile.name[0]}
                   </div>
@@ -68,32 +66,18 @@ export default function FamilyPage() {
                       {isActive && (
                         <span
                           className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-                          style={{ backgroundColor: theme?.primary ? theme.primary + "15" : undefined, color: theme?.primary ?? "#465431" }}
+                          style={{ backgroundColor: activeTheme.soft, color: activeTheme.primary }}
                         >
                           Active
                         </span>
                       )}
                     </div>
                     <p className="text-xs text-navy-muted">{profile.nickname} · {profile.role}</p>
-                    <div className="flex items-center gap-3 mt-1.5">
-                      {tasks > 0 && (
-                        <span className="text-[10px] text-sky flex items-center gap-1">
-                          <CheckSquare size={10} /> {tasks} tasks
-                        </span>
-                      )}
-                      <span className="text-[10px] text-sage flex items-center gap-1">
-                        <Receipt size={10} /> {formatCurrency(expenses)}
-                      </span>
-                      {repairs > 0 && (
-                        <span className="text-[10px] text-amber flex items-center gap-1">
-                          <Wrench size={10} /> {repairs} repairs
-                        </span>
-                      )}
-                      {shopping > 0 && (
-                        <span className="text-[10px] text-champagne-dark flex items-center gap-1">
-                          <ShoppingCart size={10} /> {shopping} items
-                        </span>
-                      )}
+                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                      {tasks > 0 && <span className="text-[10px] flex items-center gap-1" style={{ color: activeTheme.primary }}><CheckSquare size={10} /> {tasks} tasks</span>}
+                      <span className="text-[10px] flex items-center gap-1" style={{ color: activeTheme.primary }}><Receipt size={10} /> {formatCurrency(expenses)}</span>
+                      {repairs > 0 && <span className="text-[10px] flex items-center gap-1" style={{ color: activeTheme.primary }}><Wrench size={10} /> {repairs} repairs</span>}
+                      {shopping > 0 && <span className="text-[10px] flex items-center gap-1" style={{ color: activeTheme.primary }}><ShoppingCart size={10} /> {shopping} items</span>}
                     </div>
                   </div>
                   <ChevronRight size={18} className="text-navy-muted shrink-0" />
@@ -103,9 +87,8 @@ export default function FamilyPage() {
           </div>
         </section>
 
-        {/* More Links */}
         <section>
-          <h2 className="text-sm font-semibold text-navy uppercase tracking-wider mb-3">More</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: activeTheme.textAccent }}>More</h2>
           <div className="space-y-2">
             {MORE_LINKS.map((link) => {
               const Icon = link.icon;
@@ -113,13 +96,14 @@ export default function FamilyPage() {
                 <button
                   key={link.href}
                   onClick={() => router.push(link.href)}
-                  className="w-full flex items-center gap-3 p-4 bg-cream rounded-2xl border border-warm-gray/60 text-left hover:bg-cream-dark transition-colors active:scale-[0.98]"
+                  className="w-full flex items-center gap-3 p-4 bg-cream rounded-2xl border text-left hover:bg-cream-dark transition-colors active:scale-[0.98] profile-focus"
+                  style={{ borderColor: activeTheme.primary + "18" }}
                 >
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: link.color + "18" }}
+                    style={{ backgroundColor: activeTheme.soft, color: activeTheme.primary }}
                   >
-                    <Icon size={18} style={{ color: link.color }} />
+                    <Icon size={18} />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-navy">{link.label}</p>
@@ -131,13 +115,13 @@ export default function FamilyPage() {
           </div>
         </section>
 
-        {/* Switch Profile */}
         <button
           onClick={() => {
             clearProfile();
             router.push("/");
           }}
-          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-cream border border-warm-gray/60 text-navy font-medium hover:bg-cream-dark transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-cream border font-medium hover:bg-cream-dark transition-colors profile-focus"
+          style={{ borderColor: activeTheme.primary + "22", color: activeTheme.primary }}
         >
           <LogOut size={16} />
           Switch Profile
