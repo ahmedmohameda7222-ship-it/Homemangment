@@ -13,6 +13,7 @@ interface ProfileContextType {
 
 const ProfileContext = createContext<ProfileContextType | null>(null);
 const VALID_PROFILE_IDS: ProfileId[] = ["moustafa", "doaa", "ahmed", "sherien"];
+export const PROFILE_SWITCH_REDIRECT_KEY = "beitna-profile-switch-redirect";
 
 function normalizeSavedProfile(value: string | null): ProfileId | null {
   if (!value) return null;
@@ -35,6 +36,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const selectProfile = useCallback((id: ProfileId) => {
     setSelectedProfile(id);
     if (typeof window !== "undefined") {
+      sessionStorage.setItem(PROFILE_SWITCH_REDIRECT_KEY, "0");
       localStorage.setItem("beitna-profile", id);
     }
   }, []);
@@ -42,7 +44,8 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const clearProfile = useCallback(() => {
     setSelectedProfile(null);
     if (typeof window !== "undefined") {
-      localStorage.removeItem("beitna-profile");
+      sessionStorage.setItem(PROFILE_SWITCH_REDIRECT_KEY, "1");
+      localStorage.setItem("beitna-profile", "");
     }
   }, []);
 
