@@ -2,50 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  DollarSign,
-  Receipt,
-  Wrench,
-  CheckSquare,
-  ShoppingCart,
-  Plus,
-  Calendar,
-  ArrowRight,
-  Wallet,
-} from "lucide-react";
+import { DollarSign, Receipt, Wrench, CheckSquare, ShoppingCart, Plus, Calendar, ArrowRight, Wallet } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
 import { useDataStore } from "../hooks/useDataStore";
 import { getProfileTheme } from "../lib/profile-themes";
-import { getHomeBudgetTotals } from "../lib/home-budget";
-import {
-  formatCurrency,
-  getDaysUntil,
-  getCurrentMonth,
-  isOverdue,
-} from "../lib/constants";
+import { getHomeBudgetGauge, getHomeBudgetTotals } from "../lib/home-budget";
+import { formatCurrency, getDaysUntil, getCurrentMonth, isOverdue } from "../lib/constants";
 import BottomNav from "../components/BottomNav";
 import SummaryCard from "../components/SummaryCard";
 import QuickActionButton from "../components/QuickActionButton";
 import ActivityItem from "../components/ActivityItem";
 import HeroBanner from "../components/HeroBanner";
+import type { HomeBudgetSettings } from "../lib/types";
 
 export default function DashboardPage() {
   const { selectedProfile, initialized, clearProfile } = useProfile();
   const router = useRouter();
-  const [currentDate] = useState(() => new Date().toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  }));
+  const [currentDate] = useState(() => new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" }));
   const { data, loaded } = useDataStore();
-
   const theme = getProfileTheme(selectedProfile);
 
   useEffect(() => {
     if (!initialized) return;
-    if (!selectedProfile) {
-      router.push("/");
-    }
+    if (!selectedProfile) router.push("/");
   }, [selectedProfile, initialized, router]);
 
   if (!initialized || !loaded) {
@@ -62,26 +41,16 @@ export default function DashboardPage() {
   }
 
   const month = getCurrentMonth();
-
   const monthlyExpenses = data.expenses.filter((e) => e.date.startsWith(month));
   const totalSpending = monthlyExpenses.reduce((s, e) => s + e.amount, 0);
   const budgetTotals = getHomeBudgetTotals(data.homeBudgetTransactions, data.expenses);
-
-  const upcomingBills = data.bills.filter(
-    (b) => !b.paid && getDaysUntil(b.dueDate) >= 0 && getDaysUntil(b.dueDate) <= 7
-  );
+  const upcomingBills = data.bills.filter((b) => !b.paid && getDaysUntil(b.dueDate) >= 0 && getDaysUntil(b.dueDate) <= 7);
   const overdueBills = data.bills.filter((b) => !b.paid && isOverdue(b.dueDate));
-
   const openRepairs = data.repairs.filter((r) => r.status !== "closed" && r.status !== "fixed");
-  const myRepairs = openRepairs.filter(
-    (r) => r.responsiblePerson === selectedProfile || r.paidBy === selectedProfile
-  );
-
+  const myRepairs = openRepairs.filter((r) => r.responsiblePerson === selectedProfile || r.paidBy === selectedProfile);
   const myTasks = data.tasks.filter((t) => t.assignedTo === selectedProfile && t.status !== "done");
   const lateTasks = myTasks.filter((t) => t.dueDate && isOverdue(t.dueDate));
-
   const myShopping = data.shoppingItems.filter((s) => s.assignedBuyer === selectedProfile && !s.bought);
-
   const recentActivity = data.activityLog.slice(0, 8);
 
   const handleSwitchProfile = () => {
@@ -100,17 +69,12 @@ export default function DashboardPage() {
       <header className="relative z-10 px-5 -mt-12 pb-3">
         <div className="max-w-3xl mx-auto rounded-[1.75rem] bg-cream/95 border border-white/80 shadow-[0_18px_44px_rgba(26,26,46,0.09)] backdrop-blur p-5 sm:p-6">
           <div className="flex items-center gap-4">
-            <div
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold text-cream ring-4 ring-white shadow-lg shrink-0"
-              style={{ backgroundColor: primaryColor }}
-            >
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold text-cream ring-4 ring-white shadow-lg shrink-0" style={{ backgroundColor: primaryColor }}>
               {theme.displayName[0]}
             </div>
             <div className="min-w-0">
               <p className="text-xs sm:text-sm text-navy-muted font-medium">{currentDate}</p>
-              <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight" style={{ color: textAccent }}>
-                {theme.greeting}
-              </h1>
+              <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight" style={{ color: textAccent }}>{theme.greeting}</h1>
               <p className="text-sm sm:text-base text-navy-muted mt-1">{theme.subtitle}</p>
             </div>
           </div>
@@ -122,91 +86,34 @@ export default function DashboardPage() {
           balance={budgetTotals.balance}
           totalAdded={budgetTotals.totalAdded}
           totalUsed={budgetTotals.totalUsed}
+          settings={data.homeBudgetSettings}
           color={primaryColor}
           onClick={() => router.push("/home-budget")}
         />
 
         <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: textAccent }}>
-            Today&apos;s Home Summary
-          </h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: textAccent }}>Today&apos;s Home Summary</h2>
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <SummaryCard
-              title="This Month"
-              value={formatCurrency(totalSpending)}
-              subtitle={`${monthlyExpenses.length} expenses`}
-              icon={<DollarSign size={21} />}
-              color={primaryColor}
-              href="/money"
-            />
-            <SummaryCard
-              title="Bills Due"
-              value={`${upcomingBills.length + overdueBills.length}`}
-              subtitle={overdueBills.length > 0 ? `${overdueBills.length} overdue` : "Up to date"}
-              icon={<Receipt size={21} />}
-              color={overdueBills.length > 0 ? "#C47B7B" : primaryColor}
-              href="/bills"
-            />
-            <SummaryCard
-              title="Open Repairs"
-              value={String(openRepairs.length)}
-              subtitle={myRepairs.length > 0 ? `${myRepairs.length} yours` : "All handled"}
-              icon={<Wrench size={21} />}
-              color={openRepairs.length > 0 ? "#C4A47B" : primaryColor}
-              href="/repairs"
-            />
-            <SummaryCard
-              title="My Tasks"
-              value={String(myTasks.length)}
-              subtitle={lateTasks.length > 0 ? `${lateTasks.length} late` : "On track"}
-              icon={<CheckSquare size={21} />}
-              color={lateTasks.length > 0 ? "#C47B7B" : primaryColor}
-              href="/tasks"
-            />
+            <SummaryCard title="This Month" value={formatCurrency(totalSpending)} subtitle={`${monthlyExpenses.length} expenses`} icon={<DollarSign size={21} />} color={primaryColor} href="/money" />
+            <SummaryCard title="Bills Due" value={`${upcomingBills.length + overdueBills.length}`} subtitle={overdueBills.length > 0 ? `${overdueBills.length} overdue` : "Up to date"} icon={<Receipt size={21} />} color={overdueBills.length > 0 ? "#C47B7B" : primaryColor} href="/bills" />
+            <SummaryCard title="Open Repairs" value={String(openRepairs.length)} subtitle={myRepairs.length > 0 ? `${myRepairs.length} yours` : "All handled"} icon={<Wrench size={21} />} color={openRepairs.length > 0 ? "#C4A47B" : primaryColor} href="/repairs" />
+            <SummaryCard title="My Tasks" value={String(myTasks.length)} subtitle={lateTasks.length > 0 ? `${lateTasks.length} late` : "On track"} icon={<CheckSquare size={21} />} color={lateTasks.length > 0 ? "#C47B7B" : primaryColor} href="/tasks" />
           </div>
         </section>
 
         {(myTasks.length > 0 || myShopping.length > 0 || myRepairs.length > 0) && (
           <section className="animate-fade-in-up">
-            <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: textAccent }}>
-              My Responsibilities
-            </h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: textAccent }}>My Responsibilities</h2>
             <div className="bg-cream rounded-2xl border border-warm-gray/60 p-4 sm:p-5 space-y-3 shadow-[0_10px_30px_rgba(26,26,46,0.04)]">
-              {myTasks.length > 0 && (
-                <ResponsibilityRow
-                  icon={<CheckSquare size={16} />}
-                  color={primaryColor}
-                  title={`${myTasks.length} task${myTasks.length > 1 ? "s" : ""} assigned`}
-                  subtitle={`${myTasks.slice(0, 2).map((t) => t.name).join(", ")}${myTasks.length > 2 ? ` +${myTasks.length - 2} more` : ""}`}
-                  onClick={() => router.push("/tasks")}
-                />
-              )}
-              {myShopping.length > 0 && (
-                <ResponsibilityRow
-                  icon={<ShoppingCart size={16} />}
-                  color={primaryColor}
-                  title={`${myShopping.length} shopping item${myShopping.length > 1 ? "s" : ""}`}
-                  subtitle="Need to buy"
-                  onClick={() => router.push("/shopping")}
-                />
-              )}
-              {myRepairs.length > 0 && (
-                <ResponsibilityRow
-                  icon={<Wrench size={16} />}
-                  color="#C47B7B"
-                  title={`${myRepairs.length} repair${myRepairs.length > 1 ? "s" : ""} to handle`}
-                  subtitle={`${myRepairs.slice(0, 2).map((r) => r.itemName).join(", ")}${myRepairs.length > 2 ? ` +${myRepairs.length - 2} more` : ""}`}
-                  onClick={() => router.push("/repairs")}
-                />
-              )}
+              {myTasks.length > 0 && <ResponsibilityRow icon={<CheckSquare size={16} />} color={primaryColor} title={`${myTasks.length} task${myTasks.length > 1 ? "s" : ""} assigned`} subtitle={`${myTasks.slice(0, 2).map((t) => t.name).join(", ")}${myTasks.length > 2 ? ` +${myTasks.length - 2} more` : ""}`} onClick={() => router.push("/tasks")} />}
+              {myShopping.length > 0 && <ResponsibilityRow icon={<ShoppingCart size={16} />} color={primaryColor} title={`${myShopping.length} shopping item${myShopping.length > 1 ? "s" : ""}`} subtitle="Need to buy" onClick={() => router.push("/shopping")} />}
+              {myRepairs.length > 0 && <ResponsibilityRow icon={<Wrench size={16} />} color="#C47B7B" title={`${myRepairs.length} repair${myRepairs.length > 1 ? "s" : ""} to handle`} subtitle={`${myRepairs.slice(0, 2).map((r) => r.itemName).join(", ")}${myRepairs.length > 2 ? ` +${myRepairs.length - 2} more` : ""}`} onClick={() => router.push("/repairs")} />}
             </div>
           </section>
         )}
 
         <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: textAccent }}>
-            Quick Actions
-          </h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: textAccent }}>Quick Actions</h2>
           <div className="grid grid-cols-4 gap-2 sm:gap-4">
             <QuickActionButton label="Add Expense" icon={<Plus size={21} />} href="/money" color={primaryColor} />
             <QuickActionButton label="Home Budget" icon={<Wallet size={21} />} href="/home-budget" color={primaryColor} />
@@ -217,26 +124,18 @@ export default function DashboardPage() {
 
         {recentActivity.length > 0 && (
           <section>
-            <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: textAccent }}>
-              Recent Home Activity
-            </h2>
+            <h2 className="text-sm font-semibold uppercase tracking-wider mb-3" style={{ color: textAccent }}>Recent Home Activity</h2>
             <div className="bg-cream rounded-2xl border border-warm-gray/60 p-4 sm:p-5 shadow-[0_10px_30px_rgba(26,26,46,0.04)]">
-              {recentActivity.map((activity) => (
-                <ActivityItem key={activity.id} activity={activity} />
-              ))}
+              {recentActivity.map((activity) => <ActivityItem key={activity.id} activity={activity} />)}
             </div>
           </section>
         )}
 
         {recentActivity.length === 0 && (
           <section className="bg-cream rounded-2xl border border-warm-gray/60 p-6 text-center shadow-[0_10px_30px_rgba(26,26,46,0.04)]">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: softColor }}>
-              <Calendar size={24} style={{ color: primaryColor }} />
-            </div>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: softColor }}><Calendar size={24} style={{ color: primaryColor }} /></div>
             <h3 className="text-base font-semibold text-navy mb-1">Your home is fresh</h3>
-            <p className="text-sm text-navy-muted leading-relaxed">
-              Start by adding an expense, a task, or a shopping item. Everything will appear here.
-            </p>
+            <p className="text-sm text-navy-muted leading-relaxed">Start by adding an expense, a task, or a shopping item. Everything will appear here.</p>
           </section>
         )}
       </main>
@@ -246,67 +145,45 @@ export default function DashboardPage() {
   );
 }
 
-function HomeBudgetCircle({
-  balance,
-  totalAdded,
-  totalUsed,
-  color,
-  onClick,
-}: {
-  balance: number;
-  totalAdded: number;
-  totalUsed: number;
-  color: string;
-  onClick: () => void;
-}) {
+function HomeBudgetCircle({ balance, totalAdded, totalUsed, settings, color, onClick }: { balance: number; totalAdded: number; totalUsed: number; settings: HomeBudgetSettings; color: string; onClick: () => void }) {
+  const gauge = getHomeBudgetGauge(settings, balance, totalAdded);
+  const radius = 108;
+  const circumference = 2 * Math.PI * radius;
+  const progressLength = circumference * gauge.progress;
+
   return (
-    <section className="flex justify-center pt-1">
-      <button
-        onClick={onClick}
-        className="group relative flex h-48 w-48 flex-col items-center justify-center rounded-full bg-cream border border-white shadow-[0_22px_50px_rgba(26,26,46,0.10)] transition-transform active:scale-[0.98] profile-focus"
-      >
-        <div className="absolute inset-3 rounded-full border border-warm-gray/70" />
-        <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-2xl" style={{ backgroundColor: color + "18", color }}>
-          <Wallet size={22} />
-        </div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-navy-muted">Home Budget</p>
-        <p className="mt-1 text-2xl font-bold text-navy">{formatCurrency(balance)}</p>
-        <p className="mt-1 text-[11px] text-navy-muted">Tap to manage</p>
-        <div className="mt-3 flex gap-2 text-[10px] text-navy-muted">
-          <span>In {formatCurrency(totalAdded)}</span>
-          <span>•</span>
-          <span>Used {formatCurrency(totalUsed)}</span>
+    <section className="flex justify-center pt-2 pb-1">
+      <button onClick={onClick} className="group relative flex aspect-square w-[18rem] sm:w-[19.5rem] flex-col items-center justify-center rounded-full bg-cream border border-white shadow-[0_24px_58px_rgba(26,26,46,0.12)] transition-transform active:scale-[0.985] profile-focus px-8 py-8 overflow-hidden">
+        <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 260 260" aria-hidden="true">
+          <circle cx="130" cy="130" r={radius} fill="none" stroke="rgba(232,226,216,0.9)" strokeWidth="8" />
+          <circle cx="130" cy="130" r={radius} fill="none" stroke={gauge.statusColor} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${progressLength} ${circumference}`} className="transition-all duration-500" />
+        </svg>
+        <div className="absolute inset-5 rounded-full border border-warm-gray/70" />
+
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-[1.25rem]" style={{ backgroundColor: color + "18", color }}><Wallet size={25} /></div>
+          <p className="text-[12px] font-semibold uppercase tracking-[0.24em] text-navy-muted">Home Budget</p>
+          <p className="mt-2 text-[2.65rem] leading-none font-bold text-navy sm:text-[3rem]">{formatCurrency(balance)}</p>
+          <p className="mt-2 text-xs font-semibold" style={{ color: gauge.statusColor }}>{gauge.statusLabel}</p>
+          <p className="mt-1 text-[11px] text-navy-muted">Tap to manage</p>
+          <div className="mt-4 grid w-full grid-cols-2 gap-2 text-[10px] text-navy-muted">
+            <span className="rounded-full bg-linen px-2 py-1">Standard {formatCurrency(settings.standardMonthlyBudget)}</span>
+            <span className="rounded-full bg-linen px-2 py-1">Min {formatCurrency(settings.minimumBalance)}</span>
+            <span className="rounded-full bg-linen px-2 py-1">In {formatCurrency(totalAdded)}</span>
+            <span className="rounded-full bg-linen px-2 py-1">Used {formatCurrency(totalUsed)}</span>
+          </div>
         </div>
       </button>
     </section>
   );
 }
 
-function ResponsibilityRow({
-  icon,
-  color,
-  title,
-  subtitle,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  color: string;
-  title: string;
-  subtitle: string;
-  onClick: () => void;
-}) {
+function ResponsibilityRow({ icon, color, title, subtitle, onClick }: { icon: React.ReactNode; color: string; title: string; subtitle: string; onClick: () => void }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: color + "15", color }}>
-        {icon}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-navy">{title}</p>
-        <p className="text-xs text-navy-muted truncate">{subtitle}</p>
-      </div>
-      <button onClick={onClick} className="hover:opacity-70 transition-opacity profile-focus rounded-lg" style={{ color }}>
-        <ArrowRight size={18} />
-      </button>
+      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: color + "15", color }}>{icon}</div>
+      <div className="flex-1 min-w-0"><p className="text-sm font-medium text-navy">{title}</p><p className="text-xs text-navy-muted truncate">{subtitle}</p></div>
+      <button onClick={onClick} className="hover:opacity-70 transition-opacity profile-focus rounded-lg" style={{ color }}><ArrowRight size={18} /></button>
     </div>
   );
 }
