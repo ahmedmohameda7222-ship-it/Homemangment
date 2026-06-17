@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  --color-olive: #465431;
-  --color-olive-light: #5a6b42;
-  --color-olive-dark: #354025;
-  --color-champagne: #D8B86F;
-  --color-champagne-light: #E8C98A;
-  --color-champagne-dark: #B89A50;
-  --color-linen: #F7F3EA;
-  --color-cream: #FFFCF7;
-  --color-cream-dark: #F5F0E8;
-  --color-navy: #1A1A2E;
+  --color-olive: var(--profile-primary, #465431);
+  --color-olive-light: var(--profile-primary-hover, #5a6b42);
+  --color-olive-dark: var(--profile-primary-hover, #354025);
+  --color-champagne: var(--profile-secondary, #D8B86F);
+  --color-champagne-light: var(--profile-soft-2, #E8C98A);
+  --color-champagne-dark: var(--profile-accent, #B89A50);
+  --color-linen: var(--app-background, #F7F3EA);
+  --color-cream: var(--surface, #FFFCF7);
+  --color-cream-dark: var(--surface-soft, #F5F0E8);
+  --color-navy: var(--text-primary, #1A1A2E);
   --color-navy-light: #2D2D44;
-  --color-navy-muted: #6B6B80;
-  --color-sage: #8A9A6B;
-  --color-sage-light: #A8B88A;
-  --color-rose: #C47B7B;
+  --color-navy-muted: var(--text-secondary, #6B6B80);
+  --color-sage: var(--profile-primary, #8A9A6B);
+  --color-sage-light: var(--profile-secondary, #A8B88A);
+  --color-rose: var(--danger, #C47B7B);
   --color-rose-light: #D89A9A;
-  --color-sky: #7BA4C4;
-  --color-sky-light: #9ABFD8;
-  --color-amber: #C4A47B;
-  --color-amber-light: #D8BC9A;
-  --color-warm-gray: #E8E2D8;
-  --color-warm-gray-light: #F0EBE2;
+  --color-sky: var(--profile-secondary, #7BA4C4);
+  --color-sky-light: var(--profile-soft-2, #9ABFD8);
+  --color-amber: var(--profile-accent, #C4A47B);
+  --color-amber-light: var(--profile-soft-2, #D8BC9A);
+  --color-warm-gray: var(--border-soft, #E8E2D8);
+  --color-warm-gray-light: var(--surface-soft, #F0EBE2);
   --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
