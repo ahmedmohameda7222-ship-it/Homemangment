@@ -34,7 +34,6 @@ export default function ProfilesPage() {
 
   return (
     <main className="min-h-full bg-linen flex flex-col">
-      {/* Home Photo Area */}
       <section className="relative h-56 sm:h-72 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-olive/20 via-linen/40 to-linen" />
         <div className="absolute inset-0 bg-gradient-to-br from-olive/30 via-champagne/20 to-sky/20" />
@@ -47,7 +46,6 @@ export default function ProfilesPage() {
         </div>
       </section>
 
-      {/* Profile Selection */}
       <section className="flex-1 px-5 pb-8 -mt-4">
         <div className="max-w-md mx-auto">
           <p className="text-sm text-navy-muted font-medium mb-4 text-center">Select your profile</p>
@@ -55,38 +53,41 @@ export default function ProfilesPage() {
           <div className="grid grid-cols-2 gap-3 stagger-children">
             {PROFILE_ORDER.map((id) => {
               const theme = getProfileTheme(id);
-              if (!theme) return null;
               return (
                 <button
                   key={id}
                   onClick={() => handleSelectProfile(id)}
-                  className="group relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-cream border border-warm-gray/60 hover:shadow-lg hover:shadow-black/5 transition-all duration-300 active:scale-[0.97] overflow-hidden"
+                  className="group relative flex flex-col items-stretch rounded-2xl bg-cream border border-warm-gray/60 hover:shadow-lg hover:shadow-black/5 transition-all duration-300 active:scale-[0.97] overflow-hidden profile-focus"
                 >
-                  {/* Colored top accent line */}
-                  <div
-                    className="absolute top-0 left-4 right-4 h-0.5 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"
-                    style={{ backgroundColor: theme.primary }}
-                  />
-                  {/* Subtle left glow on hover */}
-                  <div
-                    className="absolute -left-8 top-1/2 -translate-y-1/2 w-16 h-16 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-500 blur-2xl"
-                    style={{ backgroundColor: theme.primary }}
-                  />
-                  <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold text-cream shadow-md transition-transform duration-300 group-hover:scale-110 relative z-10"
-                    style={{ backgroundColor: theme.primary }}
-                  >
-                    {theme.displayName[0]}
+                  <div className="relative h-20 overflow-hidden">
+                    <img
+                      src={theme.heroImage}
+                      alt="Profile hero preview"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      style={{ objectPosition: theme.heroObjectPosition ?? "center center" }}
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+                    <div
+                      className="absolute right-3 bottom-3 w-3 h-3 rounded-full ring-2 ring-white/90"
+                      style={{ backgroundColor: theme.primary }}
+                    />
                   </div>
-                  <div className="text-center relative z-10">
-                    <p
-                      className="text-base font-semibold transition-colors"
-                      style={{ color: theme.textAccent }}
+
+                  <div className="flex flex-col items-center gap-3 p-4">
+                    <div
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-cream shadow-md transition-transform duration-300 group-hover:scale-105 relative z-10 ring-4 ring-white"
+                      style={{ backgroundColor: theme.primary }}
                     >
-                      {theme.displayName}
-                    </p>
-                    <p className="text-xs text-navy-muted mt-0.5">{theme.nickname}</p>
-                    <p className="text-[10px] text-navy-muted/60 uppercase tracking-wider mt-1">{theme.role}</p>
+                      {theme.displayName[0]}
+                    </div>
+                    <div className="text-center relative z-10">
+                      <p className="text-base font-semibold transition-colors" style={{ color: theme.textAccent }}>
+                        {theme.displayName}
+                      </p>
+                      <p className="text-xs text-navy-muted mt-0.5">{theme.nickname}</p>
+                      <p className="text-[10px] text-navy-muted/60 uppercase tracking-wider mt-1">{theme.role}</p>
+                    </div>
                   </div>
                 </button>
               );
