@@ -27,6 +27,10 @@ export default function HeroBanner({ profileId, onSwitchProfile }: HeroBannerPro
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-linen via-linen/70 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-12 bg-linen rounded-t-[55%] translate-y-8" />
 
+        <div className="absolute left-5 top-5 sm:left-8 sm:top-7 rounded-full bg-black/28 px-4 py-2 text-sm font-semibold tracking-wide text-white shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur-sm">
+          {theme.nickname}
+        </div>
+
         {onSwitchProfile && (
           <button
             onClick={onSwitchProfile}
