@@ -111,7 +111,7 @@ export default function FamilyTreeLanding({ onEnter, onSkip }: FamilyTreeLanding
         </div>
 
         {/* Desktop Tree */}
-        <div className="hidden sm:block w-full max-w-5xl">
+        <div className="hidden sm:block w-full">
           <DesktopFamilyTree
             step={step}
             reducedMotion={reducedMotion}
@@ -121,7 +121,7 @@ export default function FamilyTreeLanding({ onEnter, onSkip }: FamilyTreeLanding
         </div>
 
         {/* Mobile Timeline */}
-        <div className="sm:hidden w-full max-w-md">
+        <div className="sm:hidden w-full">
           <MobileFamilyTimeline
             step={step}
             reducedMotion={reducedMotion}
@@ -231,16 +231,16 @@ function DesktopFamilyTree({
   const visible = (s: AnimationStep) => reducedMotion || step >= s;
   const line = (s: AnimationStep) => (reducedMotion || step >= s ? "animate" : "");
 
-  const cardW = 320; // px — matches Tailwind w-80
-  const gap = 200;   // px — gap between cards
-  const svgW = cardW * 2 + gap; // 840
-  const svgH = 120;  // taller connectors for bigger cards
-  const vSvgH = 100; // vertical connector height
+  const cardW = 400; // px — wide photo frames
+  const gap = 280;   // px — generous gap between cards
+  const svgW = cardW * 2 + gap; // 1080
+  const svgH = 180;  // taller connectors
+  const vSvgH = 140; // vertical connector height
 
   return (
     <div className="flex flex-col items-center">
       {/* ── Row 1: Baba & Mama ── */}
-      <div className="flex justify-center gap-[200px]">
+      <div className="flex justify-center" style={{ gap: `${gap}px` }}>
         <FamilyNodeCard node={n.baba} visible={visible(1)} errored={imageErrors.has(n.baba.id)} onError={() => onImageError(n.baba.id)} />
         <FamilyNodeCard node={n.mama} visible={visible(3)} errored={imageErrors.has(n.mama.id)} onError={() => onImageError(n.mama.id)} />
       </div>
@@ -271,13 +271,13 @@ function DesktopFamilyTree({
       </svg>
 
       {/* ── Row 3: Sherien 1994 & Ahmed 2002 ── */}
-      <div className="flex justify-center gap-[200px]">
+      <div className="flex justify-center" style={{ gap: `${gap}px` }}>
         <FamilyNodeCard node={n["sherien-1994"]} visible={visible(8)} errored={imageErrors.has("sherien-1994")} onError={() => onImageError("sherien-1994")} />
         <FamilyNodeCard node={n["ahmed-2002"]} visible={visible(12)} errored={imageErrors.has("ahmed-2002")} onError={() => onImageError("ahmed-2002")} />
       </div>
 
       {/* ── Vertical connectors ── */}
-      <div className="flex justify-center gap-[200px]">
+      <div className="flex justify-center" style={{ gap: `${gap}px` }}>
         <svg width={cardW} height={vSvgH} viewBox={`0 0 ${cardW} ${vSvgH}`} className="overflow-visible">
           <path d={`M ${cardW / 2} 0 L ${cardW / 2} ${vSvgH}`} className={`gold-line ${line(9)}`} />
         </svg>
@@ -287,7 +287,7 @@ function DesktopFamilyTree({
       </div>
 
       {/* ── Row 4: Sherien memory & Ahmed memory ── */}
-      <div className="flex justify-center gap-[200px]">
+      <div className="flex justify-center" style={{ gap: `${gap}px` }}>
         <FamilyNodeCard node={n["sherien-with-parents"]} visible={visible(10)} errored={imageErrors.has("sherien-with-parents")} onError={() => onImageError("sherien-with-parents")} />
         <FamilyNodeCard node={n["ahmed-with-parents"]} visible={visible(14)} errored={imageErrors.has("ahmed-with-parents")} onError={() => onImageError("ahmed-with-parents")} />
       </div>
@@ -346,8 +346,8 @@ function MobileFamilyTimeline({
         <div key={item.node.id} className="flex flex-col items-center">
           {/* Connector line above this card (except first) */}
           {index > 0 && item.lineStep && (
-            <svg width={2} height={56} viewBox="0 0 2 56" className="overflow-visible">
-              <path d="M 1 0 L 1 56" className={`gold-line ${line(item.lineStep)}`} />
+            <svg width={2} height={72} viewBox="0 0 2 72" className="overflow-visible">
+              <path d="M 1 0 L 1 72" className={`gold-line ${line(item.lineStep)}`} />
             </svg>
           )}
           <FamilyNodeCard
@@ -387,11 +387,24 @@ function FamilyNodeCard({
   mobile?: boolean;
 }) {
   if (!visible) {
-    return <div className={mobile ? "h-[300px]" : "h-[400px]"} aria-hidden="true" />;
+    return <div className={mobile ? "h-[420px]" : "h-[520px]"} aria-hidden="true" />;
   }
 
-  const widthClass = mobile ? "w-64" : isFinal ? "w-80 sm:w-96" : "w-72 sm:w-80";
-  const photoHeight = mobile ? "h-48" : isFinal ? "h-64 sm:h-72" : "h-56 sm:h-64";
+  const widthClass = mobile
+    ? isFinal
+      ? "w-[22rem]"
+      : "w-80"
+    : isFinal
+      ? "w-[28rem]"
+      : "w-[25rem]";
+
+  const photoHeight = mobile
+    ? isFinal
+      ? "h-80"
+      : "h-72"
+    : isFinal
+      ? "h-96"
+      : "h-80";
 
   return (
     <div
@@ -403,9 +416,9 @@ function FamilyNodeCard({
         <div
           className={`absolute rounded-full blur-2xl pointer-events-none ${isFinal ? "halo-strong" : "halo-soft"}`}
           style={{
-            width: isFinal ? "140%" : "120%",
-            height: isFinal ? "80%" : "70%",
-            top: "10%",
+            width: isFinal ? "150%" : "130%",
+            height: isFinal ? "90%" : "80%",
+            top: "5%",
             left: "50%",
             transform: "translateX(-50%)",
             background: "radial-gradient(circle, rgba(212,175,55,0.4) 0%, transparent 70%)",
@@ -432,7 +445,7 @@ function FamilyNodeCard({
           <img
             src={node.src}
             alt={node.alt}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             loading="lazy"
             onError={onError}
           />
@@ -448,8 +461,8 @@ function FamilyNodeCard({
       </div>
 
       {/* Caption */}
-      <div className="mt-2.5 text-center">
-        <p className={`font-medium text-cream/90 ${isFinal ? "text-lg sm:text-xl" : "text-base sm:text-lg"}`}>
+      <div className="mt-3 text-center">
+        <p className={`font-semibold text-cream/90 ${isFinal ? "text-lg sm:text-xl" : "text-base sm:text-lg"}`}>
           {node.caption}
         </p>
         <p className="text-sm sm:text-base text-champagne/60 mt-1 font-light">
