@@ -2,6 +2,8 @@
 
 import { LogOut } from "lucide-react";
 import { getProfileTheme } from "../lib/profile-themes";
+import { useLanguage } from "../context/LanguageContext";
+import LanguageToggle from "./LanguageToggle";
 import type { ProfileId } from "../lib/types";
 
 interface HeroBannerProps {
@@ -11,6 +13,7 @@ interface HeroBannerProps {
 
 export default function HeroBanner({ profileId, onSwitchProfile }: HeroBannerProps) {
   const theme = getProfileTheme(profileId);
+  const { t } = useLanguage();
 
   return (
     <section className="relative overflow-hidden rounded-b-[2rem] bg-[var(--surface)] shadow-[0_20px_50px_rgba(26,26,46,0.10)]">
@@ -31,16 +34,19 @@ export default function HeroBanner({ profileId, onSwitchProfile }: HeroBannerPro
           {theme.nickname}
         </div>
 
-        {onSwitchProfile && (
-          <button
-            onClick={onSwitchProfile}
-            className="absolute right-5 top-5 sm:right-8 sm:top-7 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/88 text-navy shadow-[0_8px_24px_rgba(0,0,0,0.14)] backdrop-blur transition hover:bg-white active:scale-95 profile-focus"
-            title="Switch profile"
-            aria-label="Switch profile"
-          >
-            <LogOut size={19} style={{ color: theme.primary }} />
-          </button>
-        )}
+        <div className="absolute right-5 top-5 sm:right-8 sm:top-7 flex items-center gap-2">
+          <LanguageToggle compact />
+          {onSwitchProfile && (
+            <button
+              onClick={onSwitchProfile}
+              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/88 text-navy shadow-[0_8px_24px_rgba(0,0,0,0.14)] backdrop-blur transition hover:bg-white active:scale-95 profile-focus"
+              title={t("Switch profile")}
+              aria-label={t("Switch profile")}
+            >
+              <LogOut size={19} style={{ color: theme.primary }} />
+            </button>
+          )}
+        </div>
       </div>
     </section>
   );
