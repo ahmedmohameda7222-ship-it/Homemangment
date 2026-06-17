@@ -3,23 +3,35 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Plus, CheckSquare, CheckCircle2, Clock, AlertCircle, Pencil, Trash2, Calendar,
+  Plus,
+  CheckSquare,
+  CheckCircle2,
+  Pencil,
+  Trash2,
+  Calendar,
 } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
 import { useDataStore } from "../hooks/useDataStore";
 import {
-  PROFILES, TASK_PRIORITY_COLORS, TASK_STATUS_LABELS, getToday, getDaysUntil, isOverdue, formatDate, getProfileById,
+  PROFILES,
+  getToday,
+  getDaysUntil,
+  isOverdue,
+  formatDate,
+  getProfileById,
 } from "../lib/constants";
+import { getProfileTheme } from "../lib/profile-themes";
 import Header from "../components/Header";
 import Modal from "../components/Modal";
 import EmptyState from "../components/EmptyState";
 import BottomNav from "../components/BottomNav";
-import type { Task, TaskPriority, TaskStatus, ProfileId } from "../lib/types";
+import type { Task, TaskPriority, ProfileId } from "../lib/types";
 
 type TaskTab = "all" | "pending" | "done" | "mine" | "late";
 
 export default function TasksPage() {
   const { selectedProfile } = useProfile();
+  const theme = getProfileTheme(selectedProfile);
   const router = useRouter();
   const { data, addTask, updateTask, deleteTask, markTaskDone } = useDataStore();
 
@@ -80,7 +92,9 @@ export default function TasksPage() {
         action={
           <button
             onClick={() => setIsAddOpen(true)}
-            className="w-9 h-9 rounded-xl bg-olive text-cream flex items-center justify-center hover:bg-olive-light transition-colors"
+            className="w-9 h-9 rounded-xl text-cream flex items-center justify-center transition-opacity hover:opacity-90 profile-focus"
+            style={{ backgroundColor: theme.primary }}
+            aria-label="Add task"
           >
             <Plus size={18} />
           </button>
@@ -88,27 +102,32 @@ export default function TasksPage() {
       />
 
       <div className="max-w-md mx-auto px-5 space-y-6">
-        {/* Tabs */}
         <div className="flex gap-2 overflow-x-auto pt-4 pb-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.value}
-              onClick={() => setActiveTab(tab.value)}
-              className={`shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
-                activeTab === tab.value
-                  ? "bg-olive text-cream shadow-sm"
-                  : "bg-cream text-navy-muted border border-warm-gray/60 hover:bg-cream-dark"
-              }`}
-            >
-              {tab.label}
-              <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeTab === tab.value ? "bg-cream/20 text-cream" : "bg-warm-gray text-navy-muted"}`}>
-                {tab.count}
-              </span>
-            </button>
-          ))}
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.value;
+            return (
+              <button
+                key={tab.value}
+                onClick={() => setActiveTab(tab.value)}
+                className="shrink-0 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-1.5 border profile-focus"
+                style={isActive
+                  ? { backgroundColor: theme.primary, color: "#FFFFFF", borderColor: theme.primary, boxShadow: `0 8px 18px ${theme.primary}22` }
+                  : { backgroundColor: "#FFFFFF", color: "var(--text-secondary)", borderColor: theme.primary + "1F" }}
+              >
+                {tab.label}
+                <span
+                  className="text-xs px-1.5 py-0.5 rounded-full"
+                  style={isActive
+                    ? { backgroundColor: "rgba(255,255,255,0.18)", color: "#FFFFFF" }
+                    : { backgroundColor: theme.soft, color: theme.primary }}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Tasks List */}
         <section>
           {sortedTasks.length === 0 ? (
             <EmptyState
@@ -123,64 +142,71 @@ export default function TasksPage() {
                 const isLate = task.dueDate && isOverdue(task.dueDate) && task.status !== "done";
                 const isMine = task.assignedTo === selectedProfile;
                 const assignee = getProfileById(task.assignedTo);
+                const assigneeTheme = getProfileTheme(task.assignedTo);
                 const daysLeft = task.dueDate ? getDaysUntil(task.dueDate) : null;
+                const isDone = task.status === "done";
+
                 return (
                   <div
                     key={task.id}
-                    className={`flex items-center gap-3 p-4 bg-cream rounded-2xl border ${
-                      isLate ? "border-rose/40" : isMine ? "border-olive/30" : "border-warm-gray/60"
-                    }`}
+                    className="flex items-center gap-3 p-4 bg-cream rounded-2xl border"
+                    style={{ borderColor: isLate ? "#B35C4B66" : isMine ? theme.primary + "44" : theme.primary + "20" }}
                   >
                     <button
                       onClick={() => {
-                        if (task.status !== "done") markTaskDone(task.id, selectedProfile);
+                        if (!isDone) markTaskDone(task.id, selectedProfile);
                       }}
-                      className={`w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                        task.status === "done"
-                          ? "bg-sage border-sage"
-                          : "border-warm-gray hover:border-olive"
-                      }`}
+                      className="w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors profile-focus"
+                      style={isDone
+                        ? { backgroundColor: theme.primary, borderColor: theme.primary }
+                        : { backgroundColor: "#FFFFFF", borderColor: theme.primary + "45" }}
+                      aria-label={isDone ? "Task completed" : "Mark task done"}
                     >
-                      {task.status === "done" && <CheckCircle2 size={16} className="text-cream" />}
+                      {isDone && <CheckCircle2 size={16} className="text-cream" />}
                     </button>
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className={`text-sm font-semibold ${task.status === "done" ? "text-navy-muted line-through" : "text-navy"}`}>
+                        <p className={`text-sm font-semibold ${isDone ? "text-navy-muted line-through" : "text-navy"}`}>
                           {task.name}
                         </p>
                         <span
-                          className="text-[10px] px-2 py-0.5 rounded-full font-medium text-white"
-                          style={{ backgroundColor: TASK_PRIORITY_COLORS[task.priority] || "#6B6B80" }}
+                          className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                          style={{ backgroundColor: theme.soft, color: theme.primary }}
                         >
                           {task.priority}
                         </span>
                       </div>
-                      <p className="text-xs text-navy-muted mt-0.5 flex items-center gap-1">
+                      <p className="text-xs text-navy-muted mt-0.5 flex items-center gap-1 flex-wrap">
                         {task.dueDate && (
                           <>
                             <Calendar size={10} />
                             {formatDate(task.dueDate)}
-                            {daysLeft !== null && daysLeft >= 0 && task.status !== "done" && (
-                              <span className="text-sky">{daysLeft === 0 ? " · Due today" : ` · ${daysLeft} days left`}</span>
+                            {daysLeft !== null && daysLeft >= 0 && !isDone && (
+                              <span style={{ color: theme.primary }}>{daysLeft === 0 ? " · Due today" : ` · ${daysLeft} days left`}</span>
                             )}
-                            {isLate && <span className="text-rose"> · Overdue</span>}
+                            {isLate && <span style={{ color: "#B35C4B" }}> · Overdue</span>}
                           </>
                         )}
                         {assignee && (
-                          <span style={{ color: assignee.color }}> · {assignee.name}</span>
+                          <span style={{ color: assigneeTheme.primary }}> · {assignee.name}</span>
                         )}
                       </p>
                     </div>
+
                     <div className="flex flex-col gap-1 shrink-0">
                       <button
                         onClick={() => setEditingTask(task)}
-                        className="w-7 h-7 rounded-lg bg-warm-gray/50 flex items-center justify-center hover:bg-warm-gray transition-colors"
+                        className="w-7 h-7 rounded-lg flex items-center justify-center transition-opacity hover:opacity-80 profile-focus"
+                        style={{ backgroundColor: theme.soft, color: theme.primary }}
+                        aria-label="Edit task"
                       >
-                        <Pencil size={12} className="text-navy-muted" />
+                        <Pencil size={12} />
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(task.id)}
-                        className="w-7 h-7 rounded-lg bg-rose/10 flex items-center justify-center hover:bg-rose/20 transition-colors"
+                        className="w-7 h-7 rounded-lg bg-rose/10 flex items-center justify-center hover:bg-rose/20 transition-colors profile-focus"
+                        aria-label="Delete task"
                       >
                         <Trash2 size={12} className="text-rose" />
                       </button>
@@ -195,7 +221,6 @@ export default function TasksPage() {
 
       <BottomNav />
 
-      {/* Add Task Modal */}
       <TaskModal
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
@@ -204,7 +229,6 @@ export default function TasksPage() {
         title="Add Task"
       />
 
-      {/* Edit Task Modal */}
       {editingTask && (
         <TaskModal
           isOpen={!!editingTask}
@@ -215,12 +239,22 @@ export default function TasksPage() {
         />
       )}
 
-      {/* Delete Confirm */}
       <Modal isOpen={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Task?">
         <p className="text-sm text-navy-muted mb-4">Are you sure you want to delete this task?</p>
         <div className="flex gap-3">
-          <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 rounded-xl bg-cream border border-warm-gray/60 text-navy font-medium hover:bg-cream-dark transition-colors">Cancel</button>
-          <button onClick={() => { if (deleteConfirm) deleteTask(deleteConfirm); setDeleteConfirm(null); }} className="flex-1 py-3 rounded-xl bg-rose text-cream font-medium hover:bg-rose-light transition-colors">Delete</button>
+          <button
+            onClick={() => setDeleteConfirm(null)}
+            className="flex-1 py-3 rounded-xl bg-cream border text-navy font-medium hover:bg-cream-dark transition-colors profile-focus"
+            style={{ borderColor: theme.primary + "22" }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => { if (deleteConfirm) deleteTask(deleteConfirm); setDeleteConfirm(null); }}
+            className="flex-1 py-3 rounded-xl bg-rose text-cream font-medium hover:bg-rose-light transition-colors profile-focus"
+          >
+            Delete
+          </button>
         </div>
       </Modal>
     </div>
@@ -237,6 +271,8 @@ interface TaskModalProps {
 }
 
 function TaskModal({ isOpen, onClose, onSubmit, defaultValues, defaultAssignedTo, title }: TaskModalProps) {
+  const { selectedProfile } = useProfile();
+  const theme = getProfileTheme(selectedProfile);
   const [name, setName] = useState(defaultValues?.name || "");
   const [assignedTo, setAssignedTo] = useState<ProfileId>(defaultValues?.assignedTo || defaultAssignedTo || "moustafa");
   const [dueDate, setDueDate] = useState(defaultValues?.dueDate || getToday());
@@ -261,50 +297,51 @@ function TaskModal({ isOpen, onClose, onSubmit, defaultValues, defaultAssignedTo
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="text-xs font-medium text-navy-muted uppercase tracking-wider mb-1 block">Task Name</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Pay internet bill" required className="w-full bg-cream border border-warm-gray/60 rounded-xl px-4 py-3 text-navy focus:outline-none focus:ring-2 focus:ring-olive/30" />
-        </div>
+        <Field label="Task Name">
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Pay internet bill" required className="w-full bg-cream border rounded-xl px-4 py-3 text-navy focus:outline-none profile-focus" style={{ borderColor: theme.primary + "24" }} />
+        </Field>
         <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs font-medium text-navy-muted uppercase tracking-wider mb-1 block">Assigned To</label>
-            <select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value as ProfileId)} className="w-full bg-cream border border-warm-gray/60 rounded-xl px-4 py-3 text-navy focus:outline-none focus:ring-2 focus:ring-olive/30">
-              {PROFILES.map((p) => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
+          <Field label="Assigned To">
+            <select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value as ProfileId)} className="w-full bg-cream border rounded-xl px-4 py-3 text-navy focus:outline-none profile-focus" style={{ borderColor: theme.primary + "24" }}>
+              {PROFILES.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
-          </div>
-          <div>
-            <label className="text-xs font-medium text-navy-muted uppercase tracking-wider mb-1 block">Due Date</label>
-            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required className="w-full bg-cream border border-warm-gray/60 rounded-xl px-4 py-3 text-navy focus:outline-none focus:ring-2 focus:ring-olive/30" />
-          </div>
+          </Field>
+          <Field label="Due Date">
+            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required className="w-full bg-cream border rounded-xl px-4 py-3 text-navy focus:outline-none profile-focus" style={{ borderColor: theme.primary + "24" }} />
+          </Field>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs font-medium text-navy-muted uppercase tracking-wider mb-1 block">Priority</label>
-            <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)} className="w-full bg-cream border border-warm-gray/60 rounded-xl px-4 py-3 text-navy focus:outline-none focus:ring-2 focus:ring-olive/30">
+          <Field label="Priority">
+            <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)} className="w-full bg-cream border rounded-xl px-4 py-3 text-navy focus:outline-none profile-focus" style={{ borderColor: theme.primary + "24" }}>
               <option value="low">Low</option>
               <option value="medium">Medium</option>
               <option value="high">High</option>
             </select>
-          </div>
-          <div>
-            <label className="text-xs font-medium text-navy-muted uppercase tracking-wider mb-1 block">Related To</label>
-            <select value={relatedType} onChange={(e) => setRelatedType(e.target.value)} className="w-full bg-cream border border-warm-gray/60 rounded-xl px-4 py-3 text-navy focus:outline-none focus:ring-2 focus:ring-olive/30">
+          </Field>
+          <Field label="Related To">
+            <select value={relatedType} onChange={(e) => setRelatedType(e.target.value)} className="w-full bg-cream border rounded-xl px-4 py-3 text-navy focus:outline-none profile-focus" style={{ borderColor: theme.primary + "24" }}>
               <option value="">None</option>
               <option value="bill">Bill</option>
               <option value="repair">Repair</option>
               <option value="shopping">Shopping</option>
               <option value="expense">Expense</option>
             </select>
-          </div>
+          </Field>
         </div>
-        <div>
-          <label className="text-xs font-medium text-navy-muted uppercase tracking-wider mb-1 block">Notes (optional)</label>
-          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any extra details..." rows={3} className="w-full bg-cream border border-warm-gray/60 rounded-xl px-4 py-3 text-navy focus:outline-none focus:ring-2 focus:ring-olive/30 resize-none" />
-        </div>
-        <button type="submit" className="w-full py-3.5 rounded-xl bg-olive text-cream font-semibold hover:bg-olive-light transition-colors">{title}</button>
+        <Field label="Notes (optional)">
+          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any extra details..." rows={3} className="w-full bg-cream border rounded-xl px-4 py-3 text-navy focus:outline-none profile-focus resize-none" style={{ borderColor: theme.primary + "24" }} />
+        </Field>
+        <button type="submit" className="w-full py-3.5 rounded-xl text-cream font-semibold hover:opacity-90 transition-opacity profile-focus" style={{ backgroundColor: theme.primary }}>{title}</button>
       </form>
     </Modal>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="text-xs font-medium text-navy-muted uppercase tracking-wider mb-1 block">{label}</label>
+      {children}
+    </div>
   );
 }
