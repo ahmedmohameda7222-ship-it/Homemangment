@@ -26,34 +26,44 @@
   --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
+:root {
+  --app-background: #F8F6F2;
+  --surface: #FFFFFF;
+  --surface-soft: #F2EEE8;
+  --border-soft: #E3DDD4;
+  --text-primary: #2F2A26;
+  --text-secondary: #7B746D;
+  --success: #7A9B76;
+  --warning: #C59B52;
+  --danger: #B35C4B;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #F7F3EA;
-  color: #1A1A2E;
+  background-color: var(--app-background);
+  color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F7F3EA;
+  background: var(--app-background);
 }
 ::-webkit-scrollbar-thumb {
-  background: #D8B86F;
+  background: var(--profile-secondary, #D8B86F);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B89A50;
+  background: var(--profile-primary, #B89A50);
 }
 
-/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -93,7 +103,6 @@ body {
   animation: scaleIn 0.3s ease-out forwards;
 }
 
-/* Stagger children */
 .stagger-children > * {
   opacity: 0;
   animation: fadeInUp 0.4s ease-out forwards;
@@ -105,21 +114,26 @@ body {
 .stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
 .stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
 
-/* Profile theme utilities */
-.profile-focus:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--profile-primary, #465431), 0 0 0 4px var(--profile-soft, #F7F3EA);
+.profile-bg {
+  background-color: var(--profile-primary, #465431);
 }
-.profile-ring {
-  box-shadow: 0 0 0 2px var(--profile-primary, #465431);
+.profile-bg-hover:hover {
+  background-color: var(--profile-primary-hover, #354025);
 }
 .profile-text {
   color: var(--profile-text-accent, #1A1A2E);
 }
+.profile-soft-bg,
 .profile-bg-soft {
   background-color: var(--profile-soft, #F7F3EA);
 }
 .profile-border {
   border-color: var(--profile-primary, #465431);
 }
-
+.profile-focus:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--surface, #FFFFFF), 0 0 0 5px var(--profile-soft-2, #E8E2D8);
+}
+.profile-ring {
+  box-shadow: 0 0 0 3px var(--profile-soft-2, #E8E2D8);
+}
