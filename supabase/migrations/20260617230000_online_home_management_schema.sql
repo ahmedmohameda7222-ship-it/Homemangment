@@ -9,20 +9,60 @@ create table if not exists public.profiles (
   name text not null,
   nickname text not null,
   role text not null,
+  greeting text not null default '',
+  subtitle text not null default '',
   color text not null,
   created_at timestamptz not null default now()
 );
 
-insert into public.profiles (id, name, nickname, role, color)
+-- Compatibility with older Beitna profile tables that already exist.
+alter table public.profiles add column if not exists greeting text;
+alter table public.profiles add column if not exists subtitle text;
+alter table public.profiles add column if not exists color text;
+
+update public.profiles
+set
+  greeting = coalesce(greeting, case id
+    when 'moustafa' then 'Welcome back, ya Pappy.'
+    when 'doaa' then 'Welcome back, ya Mamy.'
+    when 'ahmed' then 'Welcome back, Ahmed.'
+    when 'sherien' then 'Welcome back, Sherien.'
+    else 'Welcome back.'
+  end),
+  subtitle = coalesce(subtitle, case id
+    when 'moustafa' then 'Everything at home is ready for you.'
+    when 'doaa' then 'A peaceful home is a happy home.'
+    when 'ahmed' then 'Let''s keep Beitna organized.'
+    when 'sherien' then 'Here''s your calm home overview.'
+    else 'Your home overview is ready.'
+  end),
+  color = coalesce(color, case id
+    when 'moustafa' then '#7A2E3A'
+    when 'doaa' then '#2F6FDB'
+    when 'ahmed' then '#667A53'
+    when 'sherien' then '#0178CD'
+    else '#667A53'
+  end);
+
+alter table public.profiles alter column greeting set default '';
+alter table public.profiles alter column subtitle set default '';
+alter table public.profiles alter column color set default '#667A53';
+alter table public.profiles alter column greeting set not null;
+alter table public.profiles alter column subtitle set not null;
+alter table public.profiles alter column color set not null;
+
+insert into public.profiles (id, name, nickname, role, greeting, subtitle, color)
 values
-  ('moustafa', 'Moustafa', 'Pappy', 'Father', '#7A2E3A'),
-  ('doaa', 'Doaa', 'Mamy', 'Mother', '#2F6FDB'),
-  ('ahmed', 'Ahmed', 'Ahmed', 'Son', '#667A53'),
-  ('sherien', 'Sherien', 'shar2ozii', 'Daughter', '#0178CD')
+  ('moustafa', 'Moustafa', 'Pappy', 'Father', 'Welcome back, ya Pappy.', 'Everything at home is ready for you.', '#7A2E3A'),
+  ('doaa', 'Doaa', 'Mamy', 'Mother', 'Welcome back, ya Mamy.', 'A peaceful home is a happy home.', '#2F6FDB'),
+  ('ahmed', 'Ahmed', 'Ahmed', 'Son', 'Welcome back, Ahmed.', 'Let''s keep Beitna organized.', '#667A53'),
+  ('sherien', 'Sherien', 'shar2ozii', 'Daughter', 'Welcome back, Sherien.', 'Here''s your calm home overview.', '#0178CD')
 on conflict (id) do update set
   name = excluded.name,
   nickname = excluded.nickname,
   role = excluded.role,
+  greeting = excluded.greeting,
+  subtitle = excluded.subtitle,
   color = excluded.color;
 
 create table if not exists public.expenses (
@@ -38,6 +78,17 @@ create table if not exists public.expenses (
   notes text,
   created_at timestamptz not null default now()
 );
+
+-- Compatibility if expenses already exists from an older schema.
+alter table public.expenses add column if not exists paid_from text not null default 'personal';
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'expenses_paid_from_check'
+  ) then
+    alter table public.expenses add constraint expenses_paid_from_check check (paid_from in ('personal', 'home-budget'));
+  end if;
+end $$;
 
 create table if not exists public.home_budget_transactions (
   id uuid primary key default gen_random_uuid(),
@@ -175,9 +226,9 @@ alter table public.activity_log enable row level security;
 
 do $$
 declare
-  table_name text;
+  app_table text;
 begin
-  foreach table_name in array array[
+  foreach app_table in array array[
     'profiles',
     'expenses',
     'home_budget_transactions',
@@ -189,14 +240,14 @@ begin
     'activity_log'
   ]
   loop
-    execute format('drop policy if exists "beitna_private_app_select" on public.%I', table_name);
-    execute format('drop policy if exists "beitna_private_app_insert" on public.%I', table_name);
-    execute format('drop policy if exists "beitna_private_app_update" on public.%I', table_name);
-    execute format('drop policy if exists "beitna_private_app_delete" on public.%I', table_name);
+    execute format('drop policy if exists "beitna_private_app_select" on public.%I', app_table);
+    execute format('drop policy if exists "beitna_private_app_insert" on public.%I', app_table);
+    execute format('drop policy if exists "beitna_private_app_update" on public.%I', app_table);
+    execute format('drop policy if exists "beitna_private_app_delete" on public.%I', app_table);
 
-    execute format('create policy "beitna_private_app_select" on public.%I for select to anon, authenticated using (true)', table_name);
-    execute format('create policy "beitna_private_app_insert" on public.%I for insert to anon, authenticated with check (true)', table_name);
-    execute format('create policy "beitna_private_app_update" on public.%I for update to anon, authenticated using (true) with check (true)', table_name);
-    execute format('create policy "beitna_private_app_delete" on public.%I for delete to anon, authenticated using (true)', table_name);
+    execute format('create policy "beitna_private_app_select" on public.%I for select to anon, authenticated using (true)', app_table);
+    execute format('create policy "beitna_private_app_insert" on public.%I for insert to anon, authenticated with check (true)', app_table);
+    execute format('create policy "beitna_private_app_update" on public.%I for update to anon, authenticated using (true) with check (true)', app_table);
+    execute format('create policy "beitna_private_app_delete" on public.%I for delete to anon, authenticated using (true)', app_table);
   end loop;
 end $$;
