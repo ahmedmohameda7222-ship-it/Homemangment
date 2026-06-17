@@ -12,18 +12,25 @@ interface ProfileContextType {
 }
 
 const ProfileContext = createContext<ProfileContextType | null>(null);
+const VALID_PROFILE_IDS: ProfileId[] = ["moustafa", "doaa", "ahmed", "sherien"];
+
+function normalizeSavedProfile(value: string | null): ProfileId | null {
+  if (!value) return null;
+  if (value === "sherieen") return "sherien";
+  return VALID_PROFILE_IDS.includes(value as ProfileId) ? (value as ProfileId) : null;
+}
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const [selectedProfile, setSelectedProfile] = useState<ProfileId | null>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("beitna-profile") as ProfileId | null;
-      if (saved && ["moustafa", "doaa", "ahmed", "sherien"].includes(saved)) {
-        return saved;
-      }
+    if (typeof window === "undefined") return null;
+
+    const normalized = normalizeSavedProfile(localStorage.getItem("beitna-profile"));
+    if (normalized) {
+      localStorage.setItem("beitna-profile", normalized);
     }
-    return null;
+    return normalized;
   });
-  const initialized = true; // Profile is initialized synchronously via lazy useState
+  const initialized = true;
 
   const selectProfile = useCallback((id: ProfileId) => {
     setSelectedProfile(id);
@@ -39,7 +46,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const theme = getProfileTheme(selectedProfile);
+  const theme = selectedProfile ? getProfileTheme(selectedProfile) : null;
   const cssVars = getProfileThemeCSS(theme);
 
   return (
