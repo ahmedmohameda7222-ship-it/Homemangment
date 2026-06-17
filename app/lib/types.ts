@@ -67,6 +67,14 @@ export interface HomeBudgetTransaction {
   createdAt: string;
 }
 
+export interface HomeBudgetSettings {
+  id: "default";
+  standardMonthlyBudget: number;
+  minimumBalance: number;
+  updatedBy?: ProfileId;
+  updatedAt?: string;
+}
+
 export interface Bill {
   id: string;
   name: string;
