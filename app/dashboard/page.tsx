@@ -147,33 +147,37 @@ export default function DashboardPage() {
 
 function HomeBudgetCircle({ balance, totalAdded, totalUsed, settings, color, onClick }: { balance: number; totalAdded: number; totalUsed: number; settings: HomeBudgetSettings; color: string; onClick: () => void }) {
   const gauge = getHomeBudgetGauge(settings, balance, totalAdded);
-  const radius = 108;
+  const radius = 110;
   const circumference = 2 * Math.PI * radius;
   const progressLength = circumference * gauge.progress;
+  const amountLabel = formatCurrency(balance).replace(" EGP", "");
 
   return (
-    <section className="flex justify-center pt-2 pb-1">
-      <button onClick={onClick} className="group relative flex aspect-square w-[18rem] sm:w-[19.5rem] flex-col items-center justify-center rounded-full bg-cream border border-white shadow-[0_24px_58px_rgba(26,26,46,0.12)] transition-transform active:scale-[0.985] profile-focus px-8 py-8 overflow-hidden">
+    <section className="flex flex-col items-center justify-center pt-2 pb-1">
+      <button onClick={onClick} className="group relative flex aspect-square w-[17.25rem] sm:w-[18.25rem] flex-col items-center justify-center rounded-full bg-cream border border-white shadow-[0_24px_58px_rgba(26,26,46,0.12)] transition-transform active:scale-[0.985] profile-focus overflow-hidden">
         <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 260 260" aria-hidden="true">
-          <circle cx="130" cy="130" r={radius} fill="none" stroke="rgba(232,226,216,0.9)" strokeWidth="8" />
-          <circle cx="130" cy="130" r={radius} fill="none" stroke={gauge.statusColor} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${progressLength} ${circumference}`} className="transition-all duration-500" />
+          <circle cx="130" cy="130" r={radius} fill="none" stroke="rgba(232,226,216,0.9)" strokeWidth="7" />
+          <circle cx="130" cy="130" r={radius} fill="none" stroke={gauge.statusColor} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${progressLength} ${circumference}`} className="transition-all duration-500" />
         </svg>
-        <div className="absolute inset-5 rounded-full border border-warm-gray/70" />
-
-        <div className="relative z-10 flex flex-col items-center text-center">
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-[1.25rem]" style={{ backgroundColor: color + "18", color }}><Wallet size={25} /></div>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.24em] text-navy-muted">Home Budget</p>
-          <p className="mt-2 text-[2.65rem] leading-none font-bold text-navy sm:text-[3rem]">{formatCurrency(balance)}</p>
+        <div className="absolute inset-6 rounded-full border border-warm-gray/60" />
+        <div className="relative z-10 flex w-[72%] flex-col items-center text-center">
+          <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-2xl" style={{ backgroundColor: color + "18", color }}><Wallet size={21} /></div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-navy-muted whitespace-nowrap">Home Budget</p>
+          <div className="mt-2 flex items-baseline justify-center gap-1.5 whitespace-nowrap text-navy">
+            <span className="text-[2.8rem] sm:text-[3.05rem] leading-none font-bold tabular-nums">{amountLabel}</span>
+            <span className="text-sm sm:text-base font-bold tracking-wide">EGP</span>
+          </div>
           <p className="mt-2 text-xs font-semibold" style={{ color: gauge.statusColor }}>{gauge.statusLabel}</p>
           <p className="mt-1 text-[11px] text-navy-muted">Tap to manage</p>
-          <div className="mt-4 grid w-full grid-cols-2 gap-2 text-[10px] text-navy-muted">
-            <span className="rounded-full bg-linen px-2 py-1">Standard {formatCurrency(settings.standardMonthlyBudget)}</span>
-            <span className="rounded-full bg-linen px-2 py-1">Min {formatCurrency(settings.minimumBalance)}</span>
-            <span className="rounded-full bg-linen px-2 py-1">In {formatCurrency(totalAdded)}</span>
-            <span className="rounded-full bg-linen px-2 py-1">Used {formatCurrency(totalUsed)}</span>
-          </div>
         </div>
       </button>
+
+      <div className="mt-3 grid w-full max-w-[20rem] grid-cols-2 gap-2 text-[11px] text-navy-muted">
+        <span className="rounded-2xl bg-cream border border-warm-gray/60 px-3 py-2 text-center">Standard {formatCurrency(settings.standardMonthlyBudget)}</span>
+        <span className="rounded-2xl bg-cream border border-warm-gray/60 px-3 py-2 text-center">Min {formatCurrency(settings.minimumBalance)}</span>
+        <span className="rounded-2xl bg-cream border border-warm-gray/60 px-3 py-2 text-center">In {formatCurrency(totalAdded)}</span>
+        <span className="rounded-2xl bg-cream border border-warm-gray/60 px-3 py-2 text-center">Used {formatCurrency(totalUsed)}</span>
+      </div>
     </section>
   );
 }
