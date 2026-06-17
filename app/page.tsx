@@ -60,18 +60,27 @@ export default function HomePage() {
                 <button
                   key={id}
                   onClick={() => handleSelectProfile(id)}
-                  className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-cream border border-warm-gray/60 hover:border-[var(--profile-hover-border)] hover:shadow-lg transition-all duration-300 active:scale-[0.97]"
-                  style={{ "--profile-hover-border": theme.primary } as React.CSSProperties}
+                  className="group relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-cream border border-warm-gray/60 hover:shadow-lg hover:shadow-black/5 transition-all duration-300 active:scale-[0.97] overflow-hidden"
                 >
+                  {/* Colored top accent line */}
                   <div
-                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold text-cream shadow-md transition-transform duration-300 group-hover:scale-110"
+                    className="absolute top-0 left-4 right-4 h-0.5 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{ backgroundColor: theme.primary }}
+                  />
+                  {/* Subtle left glow on hover */}
+                  <div
+                    className="absolute -left-8 top-1/2 -translate-y-1/2 w-16 h-16 rounded-full opacity-0 group-hover:opacity-10 transition-opacity duration-500 blur-2xl"
+                    style={{ backgroundColor: theme.primary }}
+                  />
+                  <div
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold text-cream shadow-md transition-transform duration-300 group-hover:scale-110 relative z-10"
                     style={{ backgroundColor: theme.primary }}
                   >
                     {theme.displayName[0]}
                   </div>
-                  <div className="text-center">
+                  <div className="text-center relative z-10">
                     <p
-                      className="text-base font-semibold text-navy transition-colors"
+                      className="text-base font-semibold transition-colors"
                       style={{ color: theme.textAccent }}
                     >
                       {theme.displayName}
