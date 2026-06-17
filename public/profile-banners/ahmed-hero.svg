@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 864" role="img" aria-label="Calm living room hero banner for Ahmed">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#efe7da"/><stop offset=".55" stop-color="#cfc5b5"/><stop offset="1" stop-color="#667a53"/></linearGradient>
+    <radialGradient id="window" cx="9%" cy="22%" r="52%"><stop stop-color="#fff7df" stop-opacity=".9"/><stop offset="1" stop-color="#fff7df" stop-opacity="0"/></radialGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="20" stdDeviation="18" flood-color="#2f2a26" flood-opacity=".22"/></filter>
+  </defs>
+  <rect width="1536" height="864" fill="url(#wall)"/><rect width="1536" height="864" fill="url(#window)"/>
+  <rect x="74" y="0" width="260" height="864" fill="#fff8ed" opacity=".55"/><path d="M334 0v864" stroke="#bba98f" stroke-width="6" opacity=".35"/>
+  <rect x="1070" y="70" width="210" height="520" rx="28" fill="#2f2a26" opacity=".18"/><g opacity=".78"><rect x="1096" y="112" width="158" height="82" rx="8" fill="#6e5d47"/><rect x="1096" y="246" width="158" height="82" rx="8" fill="#6e5d47"/><rect x="1096" y="380" width="158" height="82" rx="8" fill="#6e5d47"/><circle cx="1164" cy="152" r="22" fill="#667a53"/><rect x="1132" y="280" width="72" height="16" rx="8" fill="#efe7da"/><circle cx="1184" cy="420" r="18" fill="#b7c5a9"/></g>
+  <rect x="600" y="210" width="330" height="250" rx="8" fill="#332a21" opacity=".72"/><rect x="624" y="232" width="282" height="206" fill="#d8cfbf"/><path d="M624 390c90-80 144-12 208-82c28-32 52-44 74-44v174H624Z" fill="#667a53" opacity=".68"/><path d="M624 438c96-54 196-74 282-44v44H624Z" fill="#3f5134" opacity=".56"/>
+  <g filter="url(#shadow)"><rect x="526" y="526" width="650" height="142" rx="48" fill="#f3eadf"/><rect x="705" y="498" width="258" height="70" rx="26" fill="#f3eadf"/><rect x="580" y="500" width="115" height="88" rx="20" fill="#dac5a8"/><rect x="718" y="500" width="110" height="88" rx="20" fill="#667a53"/><rect x="852" y="500" width="116" height="88" rx="20" fill="#c9b08f"/><rect x="986" y="500" width="118" height="88" rx="20" fill="#e4d8c8"/></g>
+  <g filter="url(#shadow)"><ellipse cx="760" cy="740" rx="300" ry="72" fill="#2f2a26" opacity=".22"/><ellipse cx="760" cy="704" rx="240" ry="84" fill="#7a4f2f"/><ellipse cx="760" cy="684" rx="190" ry="62" fill="#a06c43"/><circle cx="726" cy="676" r="38" fill="#667a53"/><path d="M650 706h220" stroke="#2f2a26" stroke-width="10" stroke-linecap="round" opacity=".2"/></g>
+  <g opacity=".8"><rect x="188" y="454" width="240" height="160" rx="50" fill="#efe7da"/><rect x="126" y="520" width="150" height="92" rx="36" fill="#e6d9c9"/><path d="M230 386c-36-112 46-198 118-132c82-98 162-6 88 114" stroke="#667a53" stroke-width="18" fill="none" stroke-linecap="round"/><circle cx="326" cy="372" r="82" fill="#667a53" opacity=".75"/></g>
+</svg>
