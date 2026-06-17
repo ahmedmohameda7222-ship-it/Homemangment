@@ -104,3 +104,22 @@ body {
 .stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
 .stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
 .stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* Profile theme utilities */
+.profile-focus:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--profile-primary, #465431), 0 0 0 4px var(--profile-soft, #F7F3EA);
+}
+.profile-ring {
+  box-shadow: 0 0 0 2px var(--profile-primary, #465431);
+}
+.profile-text {
+  color: var(--profile-text-accent, #1A1A2E);
+}
+.profile-bg-soft {
+  background-color: var(--profile-soft, #F7F3EA);
+}
+.profile-border {
+  border-color: var(--profile-primary, #465431);
+}
+

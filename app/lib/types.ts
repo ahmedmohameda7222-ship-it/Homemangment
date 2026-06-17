@@ -1,5 +1,26 @@
 export type ProfileId = "moustafa" | "doaa" | "ahmed" | "sherien";
 
+export interface ProfileTheme {
+  id: ProfileId;
+  displayName: string;
+  nickname: string;
+  role: string;
+  greeting: string;
+  subtitle: string;
+  themeName: string;
+  primary: string;
+  primaryHover: string;
+  secondary: string;
+  accent: string;
+  soft: string;
+  soft2: string;
+  textAccent: string;
+  sky?: string;
+  horizon?: string;
+  mist?: string;
+  heroType: "egyptian-food" | "cats" | "living-room" | "ocean-coastal-home";
+}
+
 export interface Profile {
   id: ProfileId;
   name: string;

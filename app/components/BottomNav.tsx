@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { Home, DollarSign, CheckSquare, Wrench, MoreHorizontal } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
+import { getProfileTheme } from "../lib/profile-themes";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/dashboard", icon: Home },
@@ -19,6 +20,9 @@ export default function BottomNav() {
 
   if (!selectedProfile) return null;
 
+  const theme = getProfileTheme(selectedProfile);
+  const primaryColor = theme?.primary ?? "#465431";
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-cream border-t border-warm-gray/60 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
       <div className="max-w-md mx-auto flex items-center justify-around px-2 py-2">
@@ -31,12 +35,13 @@ export default function BottomNav() {
               onClick={() => router.push(item.href)}
               className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 ${
                 isActive
-                  ? "text-olive bg-olive/10"
+                  ? ""
                   : "text-navy-muted hover:text-navy hover:bg-warm-gray/50"
               }`}
+              style={isActive ? { color: primaryColor, backgroundColor: primaryColor + "12" } : undefined}
             >
               <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-              <span className={`text-[10px] font-medium ${isActive ? "text-olive" : "text-navy-muted"}`}>
+              <span className={`text-[10px] font-medium ${isActive ? "" : "text-navy-muted"}`} style={isActive ? { color: primaryColor } : undefined}>
                 {item.label}
               </span>
             </button>

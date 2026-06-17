@@ -1,10 +1,11 @@
 import type { Profile, ProfileId, ExpenseCategory, Expense, Bill, Task, Repair, HomeItem, ShoppingItem, ActivityLog } from "./types";
+import { profileThemes } from "./profile-themes";
 
 export const PROFILES: Profile[] = [
-  { id: "moustafa", name: "Moustafa", nickname: "Pappy", role: "Father", greeting: "Welcome back, ya Pappy.", color: "#465431" },
-  { id: "doaa", name: "Doaa", nickname: "Mamy", role: "Mother", greeting: "Welcome back, ya Mamy.", color: "#C47B7B" },
-  { id: "ahmed", name: "Ahmed", nickname: "Ahmed", role: "Son", greeting: "Welcome back, Ahmed.", color: "#7BA4C4" },
-  { id: "sherien", name: "Sherien", nickname: "Sherien", role: "Daughter", greeting: "Welcome back, Sherien.", color: "#C4A47B" },
+  { id: "moustafa", name: "Moustafa", nickname: "Pappy", role: "Father", greeting: "Welcome back, ya Pappy.", color: profileThemes.moustafa.primary },
+  { id: "doaa", name: "Doaa", nickname: "Mamy", role: "Mother", greeting: "Welcome back, ya Mamy.", color: profileThemes.doaa.primary },
+  { id: "ahmed", name: "Ahmed", nickname: "Ahmed", role: "Son", greeting: "Welcome back, Ahmed.", color: profileThemes.ahmed.primary },
+  { id: "sherien", name: "Sherien", nickname: "Sherien", role: "Daughter", greeting: "Welcome back, Sherien.", color: profileThemes.sherien.primary },
 ];
 
 export const EXPENSE_CATEGORIES: ExpenseCategory[] = [

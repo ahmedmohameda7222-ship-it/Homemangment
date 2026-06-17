@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Settings, Trash2, AlertTriangle, Home, Users, Info, LogOut, ChevronRight, Pin, Palette, FileDown, Moon,
+  Trash2, AlertTriangle, Home, LogOut, ChevronRight, Pin, Palette, FileDown, Moon,
 } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
 import Header from "../components/Header";
 import Modal from "../components/Modal";
 import BottomNav from "../components/BottomNav";
 import { getProfileById } from "../lib/constants";
+import { getProfileTheme } from "../lib/profile-themes";
 
 export default function SettingsPage() {
   const { selectedProfile, clearProfile } = useProfile();
@@ -22,6 +23,7 @@ export default function SettingsPage() {
   }
 
   const profile = getProfileById(selectedProfile);
+  const theme = getProfileTheme(selectedProfile);
 
   const handleClearData = () => {
     localStorage.removeItem("beitna-data");
@@ -39,7 +41,7 @@ export default function SettingsPage() {
           <div className="flex items-center gap-4">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-cream"
-              style={{ backgroundColor: profile?.color || "#6B6B80" }}
+              style={{ backgroundColor: theme?.primary ?? profile?.color ?? "#6B6B80" }}
             >
               {profile?.name[0]}
             </div>
@@ -53,7 +55,8 @@ export default function SettingsPage() {
               clearProfile();
               router.push("/");
             }}
-            className="mt-4 w-full py-3 rounded-xl bg-olive/10 text-olive font-medium hover:bg-olive/20 transition-colors flex items-center justify-center gap-2"
+            className="mt-4 w-full py-3 rounded-xl font-medium hover:opacity-90 transition-colors flex items-center justify-center gap-2"
+            style={{ backgroundColor: theme?.soft ?? "#F7F3EA", color: theme?.primary ?? "#465431" }}
           >
             <LogOut size={16} />
             Switch to Another Profile

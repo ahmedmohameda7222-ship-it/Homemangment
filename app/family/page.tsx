@@ -2,11 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import {
-  Users, Receipt, ShoppingCart, Wrench, CheckSquare, BarChart3, Tv, Settings, LogOut, ArrowRight, ChevronRight, Home,
+  Receipt, ShoppingCart, Wrench, CheckSquare, BarChart3, Tv, Settings, LogOut, ChevronRight,
 } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
 import { useDataStore } from "../hooks/useDataStore";
-import { PROFILES, getProfileById, getCurrentMonth, formatCurrency } from "../lib/constants";
+import { PROFILES, getCurrentMonth, formatCurrency } from "../lib/constants";
+import { getProfileTheme } from "../lib/profile-themes";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 
@@ -44,18 +45,20 @@ export default function FamilyPage() {
               const repairs = data.repairs.filter((r) => r.responsiblePerson === profile.id || r.paidBy === profile.id).length;
               const shopping = data.shoppingItems.filter((s) => s.assignedBuyer === profile.id && !s.bought).length;
               const isActive = selectedProfile === profile.id;
+              const theme = getProfileTheme(profile.id);
 
               return (
                 <button
                   key={profile.id}
                   onClick={() => router.push(`/family/${profile.id}`)}
                   className={`w-full flex items-center gap-3 p-4 bg-cream rounded-2xl border text-left transition-all hover:bg-cream-dark ${
-                    isActive ? "border-olive/40 shadow-sm" : "border-warm-gray/60"
+                    isActive ? "shadow-sm" : "border-warm-gray/60"
                   }`}
+                  style={isActive ? { borderColor: theme?.primary ? theme.primary + "40" : undefined } : undefined}
                 >
                   <div
                     className="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold text-cream shrink-0"
-                    style={{ backgroundColor: profile.color }}
+                    style={{ backgroundColor: theme?.primary ?? profile.color }}
                   >
                     {profile.name[0]}
                   </div>
@@ -63,7 +66,12 @@ export default function FamilyPage() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-semibold text-navy">{profile.name}</p>
                       {isActive && (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-olive/15 text-olive font-medium">Active</span>
+                        <span
+                          className="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                          style={{ backgroundColor: theme?.primary ? theme.primary + "15" : undefined, color: theme?.primary ?? "#465431" }}
+                        >
+                          Active
+                        </span>
                       )}
                     </div>
                     <p className="text-xs text-navy-muted">{profile.nickname} · {profile.role}</p>

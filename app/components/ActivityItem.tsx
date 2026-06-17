@@ -1,7 +1,7 @@
 "use client";
 
-import { formatDateTime } from "../lib/constants";
-import { getProfileById } from "../lib/constants";
+import { formatDateTime, getProfileById } from "../lib/constants";
+import { getProfileTheme } from "../lib/profile-themes";
 import type { ActivityLog } from "../lib/types";
 
 interface ActivityItemProps {
@@ -28,8 +28,10 @@ const ACTION_ICONS: Record<string, string> = {
 
 export default function ActivityItem({ activity }: ActivityItemProps) {
   const profile = getProfileById(activity.performedBy);
+  const theme = getProfileTheme(activity.performedBy);
   const color = ACTION_COLORS[activity.actionType] || "#6B6B80";
   const icon = ACTION_ICONS[activity.actionType] || "📋";
+  const profileColor = theme?.primary ?? profile?.color ?? "#6B6B80";
 
   return (
     <div className="flex items-start gap-3 py-3 animate-fade-in">
@@ -41,8 +43,8 @@ export default function ActivityItem({ activity }: ActivityItemProps) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm text-navy leading-snug">
-          <span className="font-semibold" style={{ color: profile?.color }}>
-            {profile?.name}
+          <span className="font-semibold" style={{ color: profileColor }}>
+            {profile?.name ?? "Someone"}
           </span>{" "}
           {activity.description}
         </p>
