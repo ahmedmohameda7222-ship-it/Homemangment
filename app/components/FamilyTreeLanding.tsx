@@ -111,7 +111,7 @@ export default function FamilyTreeLanding({ onEnter, onSkip }: FamilyTreeLanding
         </div>
 
         {/* Desktop Tree */}
-        <div className="hidden sm:block w-full max-w-2xl">
+        <div className="hidden sm:block w-full max-w-3xl">
           <DesktopFamilyTree
             step={step}
             reducedMotion={reducedMotion}
@@ -121,7 +121,7 @@ export default function FamilyTreeLanding({ onEnter, onSkip }: FamilyTreeLanding
         </div>
 
         {/* Mobile Timeline */}
-        <div className="sm:hidden w-full max-w-xs">
+        <div className="sm:hidden w-full max-w-sm">
           <MobileFamilyTimeline
             step={step}
             reducedMotion={reducedMotion}
@@ -231,26 +231,28 @@ function DesktopFamilyTree({
   const visible = (s: AnimationStep) => reducedMotion || step >= s;
   const line = (s: AnimationStep) => (reducedMotion || step >= s ? "animate" : "");
 
-  const cardW = 150; // px — used for SVG viewBox math
-  const gap = 120;   // px
-  const svgW = cardW * 2 + gap; // 420
+  const cardW = 224; // px — matches Tailwind w-56
+  const gap = 160;   // px — gap between cards
+  const svgW = cardW * 2 + gap; // 608
+  const svgH = 100;  // taller connectors for bigger cards
+  const vSvgH = 80;  // vertical connector height
 
   return (
     <div className="flex flex-col items-center">
       {/* ── Row 1: Baba & Mama ── */}
-      <div className="flex justify-center gap-[120px]">
+      <div className="flex justify-center gap-[160px]">
         <FamilyNodeCard node={n.baba} visible={visible(1)} errored={imageErrors.has(n.baba.id)} onError={() => onImageError(n.baba.id)} />
         <FamilyNodeCard node={n.mama} visible={visible(3)} errored={imageErrors.has(n.mama.id)} onError={() => onImageError(n.mama.id)} />
       </div>
 
       {/* ── Top connector ── */}
-      <svg width={svgW} height={80} viewBox={`0 0 ${svgW} 80`} className="overflow-visible">
+      <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`} className="overflow-visible">
         {/* Baba line: down then right */}
-        <path d={`M ${cardW / 2} 0 L ${cardW / 2} 40 L ${svgW / 2} 40`} className={`gold-line ${line(2)}`} />
+        <path d={`M ${cardW / 2} 0 L ${cardW / 2} ${svgH / 2} L ${svgW / 2} ${svgH / 2}`} className={`gold-line ${line(2)}`} />
         {/* Mama line: down then left */}
-        <path d={`M ${cardW + gap + cardW / 2} 0 L ${cardW + gap + cardW / 2} 40 L ${svgW / 2} 40`} className={`gold-line ${line(4)}`} />
+        <path d={`M ${cardW + gap + cardW / 2} 0 L ${cardW + gap + cardW / 2} ${svgH / 2} L ${svgW / 2} ${svgH / 2}`} className={`gold-line ${line(4)}`} />
         {/* Shared down */}
-        <path d={`M ${svgW / 2} 40 L ${svgW / 2} 80`} className={`gold-line ${line(5)}`} />
+        <path d={`M ${svgW / 2} ${svgH / 2} L ${svgW / 2} ${svgH}`} className={`gold-line ${line(5)}`} />
       </svg>
 
       {/* ── Row 2: Wedding ── */}
@@ -259,45 +261,45 @@ function DesktopFamilyTree({
       </div>
 
       {/* ── Branch connector ── */}
-      <svg width={svgW} height={80} viewBox={`0 0 ${svgW} 80`} className="overflow-visible">
+      <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`} className="overflow-visible">
         {/* Down from wedding */}
-        <path d={`M ${svgW / 2} 0 L ${svgW / 2} 30`} className={`gold-line ${line(7)}`} />
+        <path d={`M ${svgW / 2} 0 L ${svgW / 2} ${svgH * 0.35}`} className={`gold-line ${line(7)}`} />
         {/* Left to Sherien */}
-        <path d={`M ${svgW / 2} 30 L ${cardW / 2} 30 L ${cardW / 2} 80`} className={`gold-line ${line(7)}`} />
+        <path d={`M ${svgW / 2} ${svgH * 0.35} L ${cardW / 2} ${svgH * 0.35} L ${cardW / 2} ${svgH}`} className={`gold-line ${line(7)}`} />
         {/* Right to Ahmed */}
-        <path d={`M ${svgW / 2} 30 L ${cardW + gap + cardW / 2} 30 L ${cardW + gap + cardW / 2} 80`} className={`gold-line ${line(11)}`} />
+        <path d={`M ${svgW / 2} ${svgH * 0.35} L ${cardW + gap + cardW / 2} ${svgH * 0.35} L ${cardW + gap + cardW / 2} ${svgH}`} className={`gold-line ${line(11)}`} />
       </svg>
 
       {/* ── Row 3: Sherien 1994 & Ahmed 2002 ── */}
-      <div className="flex justify-center gap-[120px]">
+      <div className="flex justify-center gap-[160px]">
         <FamilyNodeCard node={n["sherien-1994"]} visible={visible(8)} errored={imageErrors.has("sherien-1994")} onError={() => onImageError("sherien-1994")} />
         <FamilyNodeCard node={n["ahmed-2002"]} visible={visible(12)} errored={imageErrors.has("ahmed-2002")} onError={() => onImageError("ahmed-2002")} />
       </div>
 
       {/* ── Vertical connectors ── */}
-      <div className="flex justify-center gap-[120px]">
-        <svg width={cardW} height={60} viewBox={`0 0 ${cardW} 60`} className="overflow-visible">
-          <path d={`M ${cardW / 2} 0 L ${cardW / 2} 60`} className={`gold-line ${line(9)}`} />
+      <div className="flex justify-center gap-[160px]">
+        <svg width={cardW} height={vSvgH} viewBox={`0 0 ${cardW} ${vSvgH}`} className="overflow-visible">
+          <path d={`M ${cardW / 2} 0 L ${cardW / 2} ${vSvgH}`} className={`gold-line ${line(9)}`} />
         </svg>
-        <svg width={cardW} height={60} viewBox={`0 0 ${cardW} 60`} className="overflow-visible">
-          <path d={`M ${cardW / 2} 0 L ${cardW / 2} 60`} className={`gold-line ${line(13)}`} />
+        <svg width={cardW} height={vSvgH} viewBox={`0 0 ${cardW} ${vSvgH}`} className="overflow-visible">
+          <path d={`M ${cardW / 2} 0 L ${cardW / 2} ${vSvgH}`} className={`gold-line ${line(13)}`} />
         </svg>
       </div>
 
       {/* ── Row 4: Sherien memory & Ahmed memory ── */}
-      <div className="flex justify-center gap-[120px]">
+      <div className="flex justify-center gap-[160px]">
         <FamilyNodeCard node={n["sherien-with-parents"]} visible={visible(10)} errored={imageErrors.has("sherien-with-parents")} onError={() => onImageError("sherien-with-parents")} />
         <FamilyNodeCard node={n["ahmed-with-parents"]} visible={visible(14)} errored={imageErrors.has("ahmed-with-parents")} onError={() => onImageError("ahmed-with-parents")} />
       </div>
 
       {/* ── Bottom connector ── */}
-      <svg width={svgW} height={80} viewBox={`0 0 ${svgW} 80`} className="overflow-visible">
+      <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`} className="overflow-visible">
         {/* Left up then right */}
-        <path d={`M ${cardW / 2} 0 L ${cardW / 2} 40 L ${svgW / 2} 40`} className={`gold-line ${line(15)}`} />
+        <path d={`M ${cardW / 2} 0 L ${cardW / 2} ${svgH / 2} L ${svgW / 2} ${svgH / 2}`} className={`gold-line ${line(15)}`} />
         {/* Right up then left */}
-        <path d={`M ${cardW + gap + cardW / 2} 0 L ${cardW + gap + cardW / 2} 40 L ${svgW / 2} 40`} className={`gold-line ${line(16)}`} />
+        <path d={`M ${cardW + gap + cardW / 2} 0 L ${cardW + gap + cardW / 2} ${svgH / 2} L ${svgW / 2} ${svgH / 2}`} className={`gold-line ${line(16)}`} />
         {/* Final down */}
-        <path d={`M ${svgW / 2} 40 L ${svgW / 2} 80`} className={`gold-line ${line(17)}`} />
+        <path d={`M ${svgW / 2} ${svgH / 2} L ${svgW / 2} ${svgH}`} className={`gold-line ${line(17)}`} />
       </svg>
 
       {/* ── Row 5: Final Family ── */}
@@ -385,11 +387,11 @@ function FamilyNodeCard({
   mobile?: boolean;
 }) {
   if (!visible) {
-    return <div className={mobile ? "h-[180px]" : "h-[200px]"} aria-hidden="true" />;
+    return <div className={mobile ? "h-[220px]" : "h-[280px]"} aria-hidden="true" />;
   }
 
-  const widthClass = mobile ? "w-40" : isFinal ? "w-44 sm:w-48" : "w-36 sm:w-40";
-  const photoHeight = mobile ? "h-28" : isFinal ? "h-36 sm:h-40" : "h-28 sm:h-32";
+  const widthClass = mobile ? "w-52" : isFinal ? "w-60 sm:w-64" : "w-52 sm:w-56";
+  const photoHeight = mobile ? "h-36" : isFinal ? "h-48 sm:h-52" : "h-40 sm:h-44";
 
   return (
     <div
