@@ -1,4 +1,6 @@
 export type ProfileId = "moustafa" | "doaa" | "ahmed" | "sherien";
+export type PaymentSource = "personal" | "home-budget";
+export type HomeBudgetTransactionType = "add" | "remove";
 
 export interface ProfileTheme {
   id: ProfileId;
@@ -48,7 +50,19 @@ export interface Expense {
   date: string;
   paidBy: ProfileId;
   paymentMethod: string;
+  paidFrom?: PaymentSource;
   receiptUrl?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface HomeBudgetTransaction {
+  id: string;
+  type: HomeBudgetTransactionType;
+  amount: number;
+  description: string;
+  date: string;
+  performedBy: ProfileId;
   notes?: string;
   createdAt: string;
 }
