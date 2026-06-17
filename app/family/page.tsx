@@ -27,7 +27,7 @@ export default function FamilyPage() {
   const activeTheme = getProfileTheme(selectedProfile);
 
   if (!selectedProfile) {
-    router.push("/");
+    router.push("/profiles");
     return null;
   }
 
@@ -118,7 +118,7 @@ export default function FamilyPage() {
         <button
           onClick={() => {
             clearProfile();
-            router.push("/");
+            router.push("/profiles");
           }}
           className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-cream border font-medium hover:bg-cream-dark transition-colors profile-focus"
           style={{ borderColor: activeTheme.primary + "22", color: activeTheme.primary }}
