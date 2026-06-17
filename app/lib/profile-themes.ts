@@ -1,98 +1,15 @@
 import type { ProfileId, ProfileTheme } from "./types";
 
-const PROFILE_IDS: ProfileId[] = ["moustafa", "doaa", "ahmed", "sherien"];
-
-function normalizeProfileId(id?: string | null): ProfileId | null {
-  if (!id) return null;
-  if (id === "sherieen") return "sherien";
-  return PROFILE_IDS.includes(id as ProfileId) ? (id as ProfileId) : null;
-}
-
 export const profileThemes: Record<ProfileId, ProfileTheme> = {
-  moustafa: {
-    id: "moustafa",
-    displayName: "Moustafa",
-    nickname: "Pappy",
-    role: "Father",
-    themeName: "Deep Burgundy / Nebety",
-    greeting: "Welcome back, ya Pappy.",
-    subtitle: "Everything at home is ready for you.",
-    heroImage: "/profile-banners/moustafa-hero.jpg",
-    heroObjectPosition: "center center",
-    primary: "#7A2E3A",
-    primaryHover: "#65242F",
-    secondary: "#C590A6",
-    accent: "#8C4A57",
-    soft: "#F7EFF1",
-    soft2: "#EADBDC",
-    textAccent: "#7A2E3A",
-    heroType: "egyptian-food",
-  },
-  doaa: {
-    id: "doaa",
-    displayName: "Doaa",
-    nickname: "Mamy",
-    role: "Mother",
-    themeName: "True Blue",
-    greeting: "Welcome back, ya Mamy.",
-    subtitle: "A peaceful home is a happy home.",
-    heroImage: "/profile-banners/doaa-hero.jpg",
-    heroObjectPosition: "center center",
-    primary: "#2F6FDB",
-    primaryHover: "#1F57B8",
-    secondary: "#6FA0F0",
-    accent: "#0F4FB8",
-    soft: "#ECF3FF",
-    soft2: "#DCE9FF",
-    textAccent: "#0F4FB8",
-    heroType: "cats",
-  },
-  ahmed: {
-    id: "ahmed",
-    displayName: "Ahmed",
-    nickname: "Ahmed",
-    role: "Son",
-    themeName: "Olive Green",
-    greeting: "Welcome back, Ahmed.",
-    subtitle: "Let's keep Beitna organized.",
-    heroImage: "/profile-banners/ahmed-hero.jpg",
-    heroObjectPosition: "center center",
-    primary: "#667A53",
-    primaryHover: "#536342",
-    secondary: "#B7C5A9",
-    accent: "#7E9370",
-    soft: "#F2F6EE",
-    soft2: "#DFE8D6",
-    textAccent: "#3F5134",
-    heroType: "living-room",
-  },
-  sherien: {
-    id: "sherien",
-    displayName: "Sherien",
-    nickname: "Sherien",
-    role: "Daughter",
-    themeName: "Theme 3 / Strong Turquoise Ocean",
-    greeting: "Welcome back, Sherien.",
-    subtitle: "Here's your calm home overview.",
-    heroImage: "/profile-banners/sherien-hero.jpg",
-    heroObjectPosition: "center center",
-    primary: "#0178CD",
-    primaryHover: "#005FA8",
-    secondary: "#01DEE3",
-    accent: "#01D2E7",
-    soft: "#EAF8FF",
-    soft2: "#DDF7FA",
-    sky: "#60B5F3",
-    horizon: "#75B4EB",
-    mist: "#AFC3E0",
-    textAccent: "#064E8A",
-    heroType: "ocean-coastal-home",
-  },
+  moustafa: { id: "moustafa", displayName: "Moustafa", nickname: "Pappy", role: "Father", themeName: "Deep Burgundy / Nebety", greeting: "Welcome back, ya Pappy.", subtitle: "Everything at home is ready for you.", heroImage: "/profile-banners/moustafa-hero.jpg.png", heroObjectPosition: "center center", primary: "#7A2E3A", primaryHover: "#65242F", secondary: "#C590A6", accent: "#8C4A57", soft: "#F7EFF1", soft2: "#EADBDC", textAccent: "#7A2E3A", heroType: "egyptian-food" },
+  doaa: { id: "doaa", displayName: "Doaa", nickname: "Mamy", role: "Mother", themeName: "True Blue", greeting: "Welcome back, ya Mamy.", subtitle: "A peaceful home is a happy home.", heroImage: "/profile-banners/doaa-hero.jpg.png", heroObjectPosition: "center center", primary: "#2F6FDB", primaryHover: "#1F57B8", secondary: "#6FA0F0", accent: "#0F4FB8", soft: "#ECF3FF", soft2: "#DCE9FF", textAccent: "#0F4FB8", heroType: "cats" },
+  ahmed: { id: "ahmed", displayName: "Ahmed", nickname: "Ahmed", role: "Son", themeName: "Olive Green", greeting: "Welcome back, Ahmed.", subtitle: "Let's keep Beitna organized.", heroImage: "/profile-banners/ahmed-hero.jpg.png", heroObjectPosition: "center center", primary: "#667A53", primaryHover: "#536342", secondary: "#B7C5A9", accent: "#7E9370", soft: "#F2F6EE", soft2: "#DFE8D6", textAccent: "#3F5134", heroType: "living-room" },
+  sherien: { id: "sherien", displayName: "Sherien", nickname: "Sherien", role: "Daughter", themeName: "Theme 3 / Strong Turquoise Ocean", greeting: "Welcome back, Sherien.", subtitle: "Here's your calm home overview.", heroImage: "/profile-banners/sherien-hero.jpg.png", heroObjectPosition: "center center", primary: "#0178CD", primaryHover: "#005FA8", secondary: "#01DEE3", accent: "#01D2E7", soft: "#EAF8FF", soft2: "#DDF7FA", sky: "#60B5F3", horizon: "#75B4EB", mist: "#AFC3E0", textAccent: "#064E8A", heroType: "ocean-coastal-home" },
 };
 
 export function getProfileTheme(profileId?: string | null): ProfileTheme {
-  const normalized = normalizeProfileId(profileId);
-  return normalized ? profileThemes[normalized] : profileThemes.ahmed;
+  if (profileId === "moustafa" || profileId === "doaa" || profileId === "ahmed" || profileId === "sherien") return profileThemes[profileId];
+  return profileThemes.ahmed;
 }
 
 export function getProfileThemeCSS(theme: ProfileTheme | null | undefined): React.CSSProperties {
