@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { useProfile } from "./ProfileContext";
 import type { AppLanguage } from "../lib/i18n-runtime";
 import { translateText } from "../lib/i18n-runtime";
+import { watchDomTranslations } from "../lib/dom-translate";
 
 interface LanguageContextValue {
   language: AppLanguage;
@@ -40,6 +41,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
     document.body.dir = language === "ar" ? "rtl" : "ltr";
     document.body.classList.toggle("lang-ar", language === "ar");
+    return watchDomTranslations(language);
   }, [language]);
 
   const setLanguage = useCallback((nextLanguage: AppLanguage) => {
