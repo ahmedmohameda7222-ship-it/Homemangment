@@ -8,6 +8,8 @@ export interface ProfileTheme {
   greeting: string;
   subtitle: string;
   themeName: string;
+  heroImage: string;
+  heroObjectPosition?: string;
   primary: string;
   primaryHover: string;
   secondary: string;
