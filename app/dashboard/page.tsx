@@ -83,12 +83,12 @@ export default function DashboardPage() {
 
   const handleSwitchProfile = () => {
     clearProfile();
-    router.push("/");
+    router.push("/profiles");
   };
 
-  const primaryColor = theme?.primary ?? "#465431";
-  const softColor = theme?.soft ?? "#F7F3EA";
-  const textAccent = theme?.textAccent ?? "#1A1A2E";
+  const primaryColor = theme.primary;
+  const softColor = theme.soft;
+  const textAccent = theme.textAccent;
 
   return (
     <div className="min-h-full bg-linen pb-28">
@@ -101,14 +101,14 @@ export default function DashboardPage() {
               className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-xl sm:text-2xl font-bold text-cream ring-4 ring-white shadow-lg shrink-0"
               style={{ backgroundColor: primaryColor }}
             >
-              {theme?.displayName?.[0] ?? "?"}
+              {theme.displayName[0]}
             </div>
             <div className="min-w-0">
               <p className="text-xs sm:text-sm text-navy-muted font-medium">{currentDate}</p>
               <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight" style={{ color: textAccent }}>
-                {theme?.greeting ?? "Welcome back."}
+                {theme.greeting}
               </h1>
-              <p className="text-sm sm:text-base text-navy-muted mt-1">{theme?.subtitle ?? "Everything at home is ready for you."}</p>
+              <p className="text-sm sm:text-base text-navy-muted mt-1">{theme.subtitle}</p>
             </div>
           </div>
         </div>
@@ -257,7 +257,7 @@ function ResponsibilityRow({
         <p className="text-sm font-medium text-navy">{title}</p>
         <p className="text-xs text-navy-muted truncate">{subtitle}</p>
       </div>
-      <button onClick={onClick} className="hover:opacity-70 transition-opacity" style={{ color }}>
+      <button onClick={onClick} className="hover:opacity-70 transition-opacity profile-focus rounded-lg" style={{ color }}>
         <ArrowRight size={18} />
       </button>
     </div>
