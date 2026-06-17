@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ProfileProvider } from "./context/ProfileContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full bg-linen text-navy font-sans">
-        <ProfileProvider>{children}</ProfileProvider>
+        <ProfileProvider>
+          <LanguageProvider>{children}</LanguageProvider>
+        </ProfileProvider>
       </body>
     </html>
   );
