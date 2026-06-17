@@ -30,11 +30,6 @@ export default function HomeBudgetPage() {
   const { data, loaded, addHomeBudgetTransaction } = useDataStore();
   const [modalType, setModalType] = useState<HomeBudgetTransactionType | null>(null);
 
-  if (!selectedProfile) {
-    router.push("/");
-    return null;
-  }
-
   const canManage = canManageHomeBudget(selectedProfile);
   const budgetTotals = getHomeBudgetTotals(data.homeBudgetTransactions, data.expenses);
 
@@ -66,6 +61,11 @@ export default function HomeBudgetPage() {
 
     return [...budgetTransactions, ...budgetExpenses].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [data.homeBudgetTransactions, data.expenses]);
+
+  if (!selectedProfile) {
+    router.push("/");
+    return null;
+  }
 
   if (!loaded) {
     return (
