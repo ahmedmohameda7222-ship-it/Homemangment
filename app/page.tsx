@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Users, Home } from "lucide-react";
+import FamilyTreeLanding from "./components/FamilyTreeLanding";
 import { useProfile } from "./context/ProfileContext";
 import { getProfileTheme } from "./lib/profile-themes";
 import type { ProfileId } from "./lib/types";
@@ -24,6 +25,14 @@ export default function HomePage() {
     router.push("/dashboard");
   };
 
+  const handleEnter = () => {
+    document.getElementById("profile-selection")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleSkip = () => {
+    document.getElementById("profile-selection")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   if (!initialized) {
     return (
       <div className="min-h-full bg-linen flex items-center justify-center">
@@ -34,6 +43,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-full bg-linen flex flex-col">
+      <FamilyTreeLanding onEnter={handleEnter} onSkip={handleSkip} />
+
       {/* Home Photo Area */}
       <div className="relative h-56 sm:h-72 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-olive/20 via-linen/40 to-linen" />
@@ -48,7 +59,7 @@ export default function HomePage() {
       </div>
 
       {/* Profile Selection */}
-      <div className="flex-1 px-5 pb-8 -mt-4">
+      <div id="profile-selection" className="flex-1 px-5 pb-8 -mt-4">
         <div className="max-w-md mx-auto">
           <p className="text-sm text-navy-muted font-medium mb-4 text-center">Select your profile</p>
 
