@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
+import { useLanguage } from "../context/LanguageContext";
 import { getProfileTheme } from "../lib/profile-themes";
+import LanguageToggle from "./LanguageToggle";
 
 interface HeaderProps {
   title: string;
@@ -16,6 +18,7 @@ interface HeaderProps {
 export default function Header({ title, subtitle, showBack = true, backHref, action }: HeaderProps) {
   const router = useRouter();
   const { selectedProfile } = useProfile();
+  const { t, isArabic } = useLanguage();
   const theme = getProfileTheme(selectedProfile);
 
   const handleBack = () => {
@@ -30,17 +33,20 @@ export default function Header({ title, subtitle, showBack = true, backHref, act
             onClick={handleBack}
             className="w-9 h-9 rounded-xl bg-cream border flex items-center justify-center hover:bg-cream-dark transition-colors shrink-0 profile-focus"
             style={{ borderColor: theme.primary + "25" }}
-            aria-label="Back to profiles"
-            title="Back to profiles"
+            aria-label={t("Back to profiles")}
+            title={t("Back to profiles")}
           >
-            <ArrowLeft size={18} style={{ color: theme.primary }} />
+            <ArrowLeft size={18} style={{ color: theme.primary, transform: isArabic ? "scaleX(-1)" : undefined }} />
           </button>
         )}
         <div className="flex-1 min-w-0">
-          <h1 className="text-lg font-semibold truncate" style={{ color: theme.textAccent }}>{title}</h1>
-          {subtitle && <p className="text-xs text-navy-muted -mt-0.5">{subtitle}</p>}
+          <h1 className="text-lg font-semibold truncate" style={{ color: theme.textAccent }}>{t(title)}</h1>
+          {subtitle && <p className="text-xs text-navy-muted -mt-0.5">{t(subtitle)}</p>}
         </div>
-        {action && <div className="shrink-0">{action}</div>}
+        <div className="shrink-0 flex items-center gap-2">
+          <LanguageToggle compact />
+          {action}
+        </div>
       </div>
     </header>
   );
