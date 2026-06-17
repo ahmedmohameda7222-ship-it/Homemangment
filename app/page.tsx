@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import FamilyTreeLanding from "./components/FamilyTreeLanding";
-import { useProfile } from "./context/ProfileContext";
+import { PROFILE_SWITCH_REDIRECT_KEY, useProfile } from "./context/ProfileContext";
 
 export default function HomePage() {
   const { selectedProfile, initialized } = useProfile();
@@ -11,6 +11,12 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!initialized) return;
+
+    if (typeof window !== "undefined" && sessionStorage.getItem(PROFILE_SWITCH_REDIRECT_KEY) === "1") {
+      sessionStorage.setItem(PROFILE_SWITCH_REDIRECT_KEY, "0");
+      router.replace("/profiles");
+      return;
+    }
 
     if (selectedProfile) {
       router.push("/dashboard");
