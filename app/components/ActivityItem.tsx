@@ -15,6 +15,7 @@ const ACTION_COLORS: Record<string, string> = {
   repair: "#C47B7B",
   shopping: "#D8B86F",
   item: "#6B6B80",
+  "home-budget": "#B89A50",
 };
 
 const ACTION_ICONS: Record<string, string> = {
@@ -24,6 +25,7 @@ const ACTION_ICONS: Record<string, string> = {
   repair: "🔧",
   shopping: "🛒",
   item: "📦",
+  "home-budget": "🏦",
 };
 
 export default function ActivityItem({ activity }: ActivityItemProps) {
