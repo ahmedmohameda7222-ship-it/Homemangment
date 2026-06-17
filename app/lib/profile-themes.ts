@@ -15,10 +15,10 @@ export function getProfileTheme(profileId?: string | null): ProfileTheme {
 export function getProfileThemeCSS(theme: ProfileTheme | null | undefined): React.CSSProperties {
   const safeTheme = theme ?? profileThemes.ahmed;
   return {
-    "--app-background": "#F8F6F2",
+    "--app-background": safeTheme.soft,
     "--surface": "#FFFFFF",
-    "--surface-soft": "#F2EEE8",
-    "--border-soft": "#E3DDD4",
+    "--surface-soft": safeTheme.soft,
+    "--border-soft": safeTheme.soft2,
     "--text-primary": "#2F2A26",
     "--text-secondary": "#7B746D",
     "--success": "#7A9B76",
