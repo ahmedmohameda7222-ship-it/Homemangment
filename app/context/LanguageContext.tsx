@@ -2,8 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useProfile } from "./ProfileContext";
-import type { AppLanguage } from "../lib/i18n";
-import { translateText } from "../lib/i18n";
+import type { AppLanguage } from "../lib/i18n-runtime";
+import { translateText } from "../lib/i18n-runtime";
 
 interface LanguageContextValue {
   language: AppLanguage;
