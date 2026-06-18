@@ -1,4 +1,4 @@
-import type { Expense, HomeBudgetSettings, HomeBudgetTransaction, ProfileId } from "./types";
+import type { HomeBudgetSettings, HomeBudgetTransaction, ProfileId } from "./types";
 
 export const HOME_BUDGET_MANAGERS: ProfileId[] = ["moustafa", "doaa", "sherien"];
 export const DEFAULT_HOME_BUDGET_SETTINGS: HomeBudgetSettings = {
@@ -11,7 +11,7 @@ export function canManageHomeBudget(profileId: ProfileId | null | undefined) {
   return !!profileId && HOME_BUDGET_MANAGERS.includes(profileId);
 }
 
-export function getHomeBudgetTotals(transactions: HomeBudgetTransaction[] = [], expenses: Expense[] = []) {
+export function getHomeBudgetTotals(transactions: HomeBudgetTransaction[] = []) {
   const totalAdded = transactions
     .filter((item) => item.type === "add")
     .reduce((sum, item) => sum + item.amount, 0);
@@ -20,16 +20,12 @@ export function getHomeBudgetTotals(transactions: HomeBudgetTransaction[] = [], 
     .filter((item) => item.type === "remove")
     .reduce((sum, item) => sum + item.amount, 0);
 
-  const spentFromExpenses = expenses
-    .filter((expense) => (expense.paidFrom ?? "personal") === "home-budget")
-    .reduce((sum, expense) => sum + expense.amount, 0);
-
   return {
     totalAdded,
     manualRemoved,
-    spentFromExpenses,
-    totalUsed: manualRemoved + spentFromExpenses,
-    balance: totalAdded - manualRemoved - spentFromExpenses,
+    spentFromExpenses: 0,
+    totalUsed: manualRemoved,
+    balance: totalAdded - manualRemoved,
   };
 }
 
