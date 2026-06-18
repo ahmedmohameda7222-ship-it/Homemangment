@@ -11,7 +11,7 @@ export function canManageHomeBudget(profileId: ProfileId | null | undefined) {
   return !!profileId && HOME_BUDGET_MANAGERS.includes(profileId);
 }
 
-export function getHomeBudgetTotals(transactions: HomeBudgetTransaction[] = []) {
+export function getHomeBudgetTotals(transactions: HomeBudgetTransaction[] = [], _ignored?: unknown) {
   const totalAdded = transactions
     .filter((item) => item.type === "add")
     .reduce((sum, item) => sum + item.amount, 0);
