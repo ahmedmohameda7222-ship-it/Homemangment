@@ -3,25 +3,25 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Plus,
-  DollarSign,
-  Trash2,
-  Search,
-  Receipt,
-  ShoppingBasket,
-  Wrench,
-  Home,
-  Pill,
-  Car,
-  Users,
-  Heart,
-  ChefHat,
   Bath,
-  MoreHorizontal,
-  Tv,
-  Lock,
+  Car,
+  ChefHat,
+  DollarSign,
+  Heart,
+  Home,
   KeyRound,
+  Lock,
+  MoreHorizontal,
+  Pill,
+  Plus,
+  Receipt,
+  Search,
   ShieldCheck,
+  ShoppingBasket,
+  Trash2,
+  Tv,
+  Users,
+  Wrench,
 } from "lucide-react";
 import { useProfile } from "../context/ProfileContext";
 import { useLanguage } from "../context/LanguageContext";
@@ -29,11 +29,11 @@ import { useDataStore } from "../hooks/useDataStore";
 import {
   EXPENSE_CATEGORIES,
   PAYMENT_METHODS,
-  getCurrentMonth,
   formatCurrency,
   formatDate,
-  getToday,
   getCategoryById,
+  getCurrentMonth,
+  getToday,
 } from "../lib/constants";
 import { getProfileTheme } from "../lib/profile-themes";
 import Header from "../components/Header";
@@ -88,18 +88,19 @@ export default function MoneyPage() {
     const savedPin = localStorage.getItem(getExpensePinKey(selectedProfile));
     const unlocked = sessionStorage.getItem(getExpenseUnlockKey(selectedProfile)) === "1";
     setHasPin(Boolean(savedPin));
-    setIsUnlocked(!savedPin || unlocked);
+    setIsUnlocked(Boolean(savedPin) && unlocked);
     setPinReady(true);
   }, [selectedProfile]);
 
-  if (!selectedProfile) {
-    router.push("/profiles");
-    return null;
-  }
-
   const month = getCurrentMonth();
-  const myExpenses = data.expenses.filter((expense) => expense.paidBy === selectedProfile);
-  const monthlyExpenses = myExpenses.filter((expense) => expense.date.startsWith(month));
+  const myExpenses = useMemo(
+    () => data.expenses.filter((expense) => expense.paidBy === selectedProfile),
+    [data.expenses, selectedProfile],
+  );
+  const monthlyExpenses = useMemo(
+    () => myExpenses.filter((expense) => expense.date.startsWith(month)),
+    [myExpenses, month],
+  );
   const monthlyTotal = monthlyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
 
   const filteredExpenses = useMemo(() => {
@@ -122,13 +123,22 @@ export default function MoneyPage() {
       .sort((a, b) => b.amount - a.amount);
   }, [monthlyExpenses]);
 
+  if (!selectedProfile) {
+    router.push("/profiles");
+    return null;
+  }
+
   const lockExpenses = () => {
     sessionStorage.removeItem(getExpenseUnlockKey(selectedProfile));
     setIsUnlocked(false);
   };
 
   if (!pinReady) {
-    return <div className="min-h-full bg-linen flex items-center justify-center"><div className="w-8 h-8 rounded-full animate-spin" style={{ border: `2px solid ${theme.primary}33`, borderTopColor: theme.primary }} /></div>;
+    return (
+      <div className="min-h-full bg-linen flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full animate-spin" style={{ border: `2px solid ${theme.primary}33`, borderTopColor: theme.primary }} />
+      </div>
+    );
   }
 
   if (!isUnlocked) {
@@ -242,7 +252,9 @@ export default function MoneyPage() {
                         <p className="text-[10px] text-navy-muted">{t(expense.paymentMethod)}</p>
                       </div>
                     </button>
-                    <button onClick={() => setDeleteConfirm(expense.id)} className="w-8 h-8 rounded-lg bg-rose/10 flex items-center justify-center hover:bg-rose/20 transition-colors shrink-0 profile-focus" aria-label={t("Delete")}> <Trash2 size={14} className="text-rose" /> </button>
+                    <button onClick={() => setDeleteConfirm(expense.id)} className="w-8 h-8 rounded-lg bg-rose/10 flex items-center justify-center hover:bg-rose/20 transition-colors shrink-0 profile-focus" aria-label={t("Delete")}>
+                      <Trash2 size={14} className="text-rose" />
+                    </button>
                   </div>
                 );
               })}
@@ -253,10 +265,27 @@ export default function MoneyPage() {
 
       <BottomNav />
 
-      <ExpenseModal isOpen={isAddOpen} onClose={() => setIsAddOpen(false)} onSubmit={(expense) => { addExpense({ ...expense, paidBy: selectedProfile, paidFrom: "personal", receiptUrl: undefined }, selectedProfile); setIsAddOpen(false); }} title="Add Expense" />
+      <ExpenseModal
+        isOpen={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        onSubmit={(expense) => {
+          addExpense({ ...expense, paidBy: selectedProfile, paidFrom: "personal" }, selectedProfile);
+          setIsAddOpen(false);
+        }}
+        title="Add Expense"
+      />
 
       {editingExpense && (
-        <ExpenseModal isOpen={!!editingExpense} onClose={() => setEditingExpense(null)} onSubmit={(expense) => { updateExpense(editingExpense.id, { ...expense, paidBy: selectedProfile, paidFrom: "personal", receiptUrl: undefined }); setEditingExpense(null); }} defaultValues={editingExpense} title="Edit Expense" />
+        <ExpenseModal
+          isOpen={!!editingExpense}
+          onClose={() => setEditingExpense(null)}
+          onSubmit={(expense) => {
+            updateExpense(editingExpense.id, { ...expense, paidBy: selectedProfile, paidFrom: "personal" });
+            setEditingExpense(null);
+          }}
+          defaultValues={editingExpense}
+          title="Edit Expense"
+        />
       )}
 
       <Modal isOpen={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Expense?">
